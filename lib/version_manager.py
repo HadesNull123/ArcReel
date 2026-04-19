@@ -198,7 +198,7 @@ class VersionManager:
         """
         将当前文件备份到版本目录
 
-        如果当前文件不存在，不执行任何操作。
+        如果当前文件does not exist，不执行任何操作。
 
         Args:
             resource_type: 资源类型
@@ -235,7 +235,7 @@ class VersionManager:
             **metadata: 额外元数据
 
         Returns:
-            新增的版本号；若无需新增或文件不存在则返回 None
+            新增的版本号；若无需新增或文件does not exist则返回 None
         """
         current_file = Path(current_file)
         if not current_file.exists():
@@ -280,7 +280,7 @@ class VersionManager:
             resource_data = data.get(resource_type, {}).get(resource_id)
 
             if not resource_data:
-                raise ValueError(f"资源不存在: {resource_type}/{resource_id}")
+                raise ValueError(f"资源does not exist: {resource_type}/{resource_id}")
 
             target_version = None
             for v in resource_data["versions"]:
@@ -289,11 +289,11 @@ class VersionManager:
                     break
 
             if not target_version:
-                raise ValueError(f"版本不存在: {version}")
+                raise ValueError(f"版本does not exist: {version}")
 
             target_file = self.project_path / target_version["file"]
             if not target_file.exists():
-                raise FileNotFoundError(f"版本文件不存在: {target_file}")
+                raise FileNotFoundError(f"版本文件does not exist: {target_file}")
 
             current_file.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(target_file, current_file)
@@ -318,7 +318,7 @@ class VersionManager:
             version: 版本号
 
         Returns:
-            文件 URL，不存在时返回 None
+            文件 URL，does not exist时返回 None
         """
         info = self.get_versions(resource_type, resource_id)
         for v in info["versions"]:
@@ -336,7 +336,7 @@ class VersionManager:
             version: 版本号
 
         Returns:
-            prompt 文本，不存在时返回 None
+            prompt 文本，does not exist时返回 None
         """
         info = self.get_versions(resource_type, resource_id)
         for v in info["versions"]:

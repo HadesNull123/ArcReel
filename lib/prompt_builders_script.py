@@ -123,6 +123,8 @@ Description: {style_description}
    - 【180-Degree Rule】: The left/right positioning of characters in dialogue scenes must remain consistent. Do not cross the axis (jump the line) in continuous shots. Reverse shots must be taken over-the-shoulder.
    - 【Psychological Perspective Rule】: When showing a dominant/oppressive/majestic character, use Low Angle; when showing a weak/fearful/small character, use High Angle; use Eye-level for equal dialogue.
    - 【Camera Filming Scope Logic】: Only describe visual elements that the camera can actually see. For Close-ups or single reverse shots, NEVER describe other characters not in the frame in the 'scene' or 'action' fields, to avoid video model hallucinations.
+   - 【Creative Match Cut Rule】: For emotional shifts or location changes, intelligently design match cuts (e.g., zoom in to a character's face/object, then cut to a similar shape/object in the next scene, and zoom out).
+   - 【Shot Diversity & Coverage】: Ensure high shot diversity within a sequence (Wide establishing shot -> Medium dialogue -> Close-up reactions). Split narrative beats into multiple varied camera angles to maintain cinematic pacing.
 
 a. **novel_text**: Copy the original novel text exactly, without any modifications.
 
@@ -260,6 +262,8 @@ Description: {style_description}
    - 【180-Degree Rule】: The left/right positioning of characters in dialogue scenes must remain consistent. Do not cross the axis (jump the line) in continuous shots. Reverse shots must be taken over-the-shoulder.
    - 【Psychological Perspective Rule】: When showing a dominant/oppressive/majestic character, use Low Angle; when showing a weak/fearful/small character, use High Angle; use Eye-level for equal dialogue.
    - 【Camera Filming Scope Logic】: Only describe visual elements that the camera can actually see. For Close-ups or single reverse shots, NEVER describe other characters not in the frame in the 'scene' or 'action' fields, to avoid video model hallucinations.
+   - 【Creative Match Cut Rule】: For emotional shifts or location changes, intelligently design match cuts (e.g., zoom in to a character's face/object, then cut to a similar shape/object in the next scene, and zoom out).
+   - 【Shot Diversity & Coverage】: Ensure high shot diversity within a sequence (Wide establishing shot -> Medium dialogue -> Close-up reactions). Split narrative beats into multiple varied camera angles to maintain cinematic pacing.
 
 a. **characters_in_scene**: List the names of the characters appearing in this shot.
    - Optional values: [{", ".join(character_names)}]

@@ -79,7 +79,7 @@ def generate_single(asset_type: str, name: str) -> Path:
 
     description = _get_asset_description(project, asset_type, name)
     if not description:
-        raise ValueError(f"{cfg['label']} '{name}' 的描述为空或不存在于 project.json，请先添加描述")
+        raise ValueError(f"{cfg['label']} '{name}' 的描述为空或does not exist于 project.json，请先添加描述")
 
     print(f"🎨 正在生成{cfg['label']}设计图: {name}")
     print(f"   描述: {description[:50]}..." if len(description) > 50 else f"   描述: {description}")
@@ -145,7 +145,7 @@ def _build_specs(
         resolved: list[str] = []
         for name in names:
             if name not in assets_dict:
-                print(f"⚠️  {cfg['label']} '{name}' 不存在于 project.json 中，跳过")
+                print(f"⚠️  {cfg['label']} '{name}' does not exist于 project.json 中，跳过")
                 continue
             if not assets_dict[name].get("description"):
                 print(f"⚠️  {cfg['label']} '{name}' 缺少描述，跳过")

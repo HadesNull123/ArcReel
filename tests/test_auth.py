@@ -165,12 +165,12 @@ class TestEnsureAuthPassword:
             assert "SOME_VAR=hello" in content
 
     def test_env_file_not_exist_no_error(self, tmp_path):
-        """.env 文件不存在时不抛异常，并创建新文件"""
+        """.env 文件does not exist时不抛异常，并创建新文件"""
         env_file = tmp_path / "nonexistent" / ".env"
         env = os.environ.copy()
         env.pop("AUTH_PASSWORD", None)
         with patch.dict(os.environ, env, clear=True):
-            # 父目录不存在会触发 OSError，函数不应抛异常
+            # 父目录does not exist会触发 OSError，函数不应抛异常
             password = auth_module.ensure_auth_password(env_path=str(env_file))
             assert len(password) == 16
             assert password.isalnum()

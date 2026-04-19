@@ -361,7 +361,7 @@ class TaskRepository(BaseRepository):
         result = await self.session.execute(select(Task).where(Task.task_id == task_id))
         task = result.scalar_one_or_none()
         if not task:
-            raise ValueError(f"任务 '{task_id}' 不存在")
+            raise ValueError(f"任务 '{task_id}' does not exist")
         if task.status != "queued":
             raise ValueError("只有排队中的任务可以取消")
 
@@ -396,7 +396,7 @@ class TaskRepository(BaseRepository):
         result = await self.session.execute(select(Task).where(Task.task_id == task_id))
         task = result.scalar_one_or_none()
         if not task:
-            raise ValueError(f"任务 '{task_id}' 不存在")
+            raise ValueError(f"任务 '{task_id}' does not exist")
         if task.status != "queued":
             raise ValueError("只有排队中的任务可以取消")
 

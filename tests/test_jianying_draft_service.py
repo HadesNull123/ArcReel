@@ -79,7 +79,7 @@ class TestCollectVideoClips:
         assert clips[0]["novel_text"] == ""
 
     def test_skips_missing_video_files(self, tmp_path):
-        """script 中有记录但文件不存在时跳过"""
+        """script 中有记录但文件does not exist时跳过"""
         from server.services.jianying_draft_service import JianyingDraftService
 
         project_dir = tmp_path / "projects" / "demo"
@@ -343,13 +343,13 @@ class TestExportEpisodeDraft:
             assert draft_path in raw
 
     def test_episode_not_found_raises(self, tmp_path):
-        """集数不存在时抛出 FileNotFoundError"""
+        """集数does not exist时抛出 FileNotFoundError"""
         from server.services.jianying_draft_service import JianyingDraftService
 
         pm, _ = self._setup_project(tmp_path)
         svc = JianyingDraftService(pm)
 
-        with pytest.raises(FileNotFoundError, match="第 99 集不存在"):
+        with pytest.raises(FileNotFoundError, match="第 99 集does not exist"):
             svc.export_episode_draft(project_name="demo", episode=99, draft_path="/tmp")
 
     def test_no_videos_raises_value_error(self, tmp_path):

@@ -87,7 +87,7 @@ async def _migrate(dry_run: bool) -> dict[str, int]:
             tasks, events, leases = _read_old_tasks(conn)
         print(f"  读取旧任务队列: tasks={len(tasks)}, events={len(events)}, leases={len(leases)}")
     else:
-        print(f"  跳过（不存在）: {OLD_TASK_DB}")
+        print(f"  跳过（does not exist）: {OLD_TASK_DB}")
 
     api_calls = []
     if OLD_USAGE_DB.exists():
@@ -95,7 +95,7 @@ async def _migrate(dry_run: bool) -> dict[str, int]:
             api_calls = _read_old_usage(conn)
         print(f"  读取旧 API 用量: api_calls={len(api_calls)}")
     else:
-        print(f"  跳过（不存在）: {OLD_USAGE_DB}")
+        print(f"  跳过（does not exist）: {OLD_USAGE_DB}")
 
     sessions = []
     if OLD_SESSIONS_DB.exists():
@@ -103,7 +103,7 @@ async def _migrate(dry_run: bool) -> dict[str, int]:
             sessions = _read_old_sessions(conn)
         print(f"  读取旧会话记录: sessions={len(sessions)}")
     else:
-        print(f"  跳过（不存在）: {OLD_SESSIONS_DB}")
+        print(f"  跳过（does not exist）: {OLD_SESSIONS_DB}")
 
     if dry_run:
         print("\n[DRY RUN] 不写入数据库，不重命名旧文件。")

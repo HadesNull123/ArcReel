@@ -236,18 +236,18 @@ class TestFilesRouter:
             assert ref_no_name.json()["path"] == "characters/refs/no_name.jpg"
 
             clue_missing_entity = client.post(
-                "/api/v1/projects/demo/upload/prop?name=不存在道具",
+                "/api/v1/projects/demo/upload/prop?name=does not exist道具",
                 files={"file": ("x.jpg", _img_bytes("JPEG"), "image/jpeg")},
             )
             assert clue_missing_entity.status_code == 200
-            assert clue_missing_entity.json()["path"] == "props/不存在道具.jpg"
+            assert clue_missing_entity.json()["path"] == "props/does not exist道具.jpg"
 
             character_missing_entity = client.post(
-                "/api/v1/projects/demo/upload/character?name=不存在角色",
+                "/api/v1/projects/demo/upload/character?name=does not exist角色",
                 files={"file": ("x.jpg", _img_bytes("JPEG"), "image/jpeg")},
             )
             assert character_missing_entity.status_code == 200
-            assert character_missing_entity.json()["path"] == "characters/不存在角色.jpg"
+            assert character_missing_entity.json()["path"] == "characters/does not exist角色.jpg"
 
             storyboard_no_name = client.post(
                 "/api/v1/projects/demo/upload/storyboard",
@@ -425,7 +425,7 @@ class TestFilesRouter:
             assert resp.status_code == 400
 
     def test_global_asset_missing_file_returns_404(self, tmp_path, monkeypatch):
-        """文件不存在时返回 404"""
+        """文件does not exist时返回 404"""
         client, _ = _client(monkeypatch, tmp_path)
 
         with client:

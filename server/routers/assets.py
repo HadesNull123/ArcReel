@@ -81,7 +81,7 @@ def _delete_global_asset_file(rel_path: str) -> None:
     try:
         path.unlink()
     except FileNotFoundError:
-        # 文件已不存在（并发删除或 create 回滚）视为成功，忽略即可
+        # 文件已does not exist（并发删除或 create 回滚）视为成功，忽略即可
         return
     except OSError:
         logger.warning("delete global asset file failed: %s", rel_path)

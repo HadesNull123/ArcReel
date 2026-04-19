@@ -597,7 +597,7 @@ class TestProjectArchiveService:
         with pytest.raises(ProjectArchiveValidationError) as exc_info:
             service.import_project_archive(archive_path, uploaded_filename="missing-scene.zip")
 
-        assert any("不存在于 project.json 的场景" in error for error in exc_info.value.errors)
+        assert any("does not exist于 project.json 的场景" in error for error in exc_info.value.errors)
         assert exc_info.value.extra["diagnostics"]["blocking"]
 
     def test_import_blocks_missing_prop_definition(self, tmp_path):
@@ -636,7 +636,7 @@ class TestProjectArchiveService:
         with pytest.raises(ProjectArchiveValidationError) as exc_info:
             service.import_project_archive(archive_path, uploaded_filename="missing-prop.zip")
 
-        assert any("不存在于 project.json 的道具" in error for error in exc_info.value.errors)
+        assert any("does not exist于 project.json 的道具" in error for error in exc_info.value.errors)
         assert exc_info.value.extra["diagnostics"]["blocking"]
 
     def test_export_dirty_project_emits_diagnostics_and_repairs_snapshot(self, tmp_path):

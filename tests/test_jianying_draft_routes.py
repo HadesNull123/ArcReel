@@ -95,7 +95,7 @@ class TestJianyingDraftExport:
         assert any("draft_info.json" in n for n in names)
 
     def test_missing_episode_returns_404(self, tmp_path, monkeypatch):
-        """集数不存在返回 404"""
+        """集数does not exist返回 404"""
         pm = ProjectManager(tmp_path / "projects")
         _setup_project(pm)
         client = _client(monkeypatch, pm)

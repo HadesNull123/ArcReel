@@ -42,7 +42,7 @@ async def get_cost_estimate(project_name: str, _user: CurrentUser, _t: Translato
                 try:
                     scripts[script_file] = pm.load_script(project_name, script_file)
                 except FileNotFoundError:
-                    logger.debug("剧本文件不存在，跳过: %s/%s", project_name, script_file)
+                    logger.debug("剧本文件does not exist，跳过: %s/%s", project_name, script_file)
 
         return project_data, scripts
 

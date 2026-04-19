@@ -116,7 +116,7 @@ class DataValidator:
             if resolved.exists():
                 return candidate.as_posix(), None
 
-        return None, f"引用的文件不存在: {normalized}"
+        return None, f"引用的文件does not exist: {normalized}"
 
     def _validate_local_reference(
         self,
@@ -254,7 +254,7 @@ class DataValidator:
             return
         invalid = set(refs) - valid_set
         if invalid:
-            errors.append(f"{prefix}: {field_label} 引用了不存在于 project.json 的{kind_label}: {invalid}")
+            errors.append(f"{prefix}: {field_label} 引用了does not exist于 project.json 的{kind_label}: {invalid}")
 
     def validate_project(self, project_name: str) -> ValidationResult:
         """验证 project.json"""
@@ -361,7 +361,7 @@ class DataValidator:
             else:
                 invalid = set(chars_in_segment) - project_characters
                 if invalid:
-                    errors.append(f"{prefix}: characters_in_segment 引用了不存在于 project.json 的角色: {invalid}")
+                    errors.append(f"{prefix}: characters_in_segment 引用了does not exist于 project.json 的角色: {invalid}")
 
             self._validate_segment_refs(
                 prefix,
@@ -440,7 +440,7 @@ class DataValidator:
             else:
                 invalid = set(chars_in_scene) - project_characters
                 if invalid:
-                    errors.append(f"{prefix}: characters_in_scene 引用了不存在于 project.json 的角色: {invalid}")
+                    errors.append(f"{prefix}: characters_in_scene 引用了does not exist于 project.json 的角色: {invalid}")
 
             scenes_in_scene = scene.get("scenes")
             if scenes_in_scene is None:
@@ -450,7 +450,7 @@ class DataValidator:
             else:
                 invalid = set(scenes_in_scene) - project_scenes
                 if invalid:
-                    errors.append(f"{prefix}: scenes 引用了不存在于 project.json 的场景: {invalid}")
+                    errors.append(f"{prefix}: scenes 引用了does not exist于 project.json 的场景: {invalid}")
 
             props_in_scene = scene.get("props")
             if props_in_scene is None:
@@ -460,7 +460,7 @@ class DataValidator:
             else:
                 invalid = set(props_in_scene) - project_props
                 if invalid:
-                    errors.append(f"{prefix}: props 引用了不存在于 project.json 的道具: {invalid}")
+                    errors.append(f"{prefix}: props 引用了does not exist于 project.json 的道具: {invalid}")
 
             if not scene.get("image_prompt"):
                 errors.append(f"{prefix}: 缺少必填字段 image_prompt")

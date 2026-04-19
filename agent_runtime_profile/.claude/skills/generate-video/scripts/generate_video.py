@@ -276,7 +276,7 @@ def _build_video_specs(
             continue
         storyboard_path = project_dir / storyboard_image
         if not storyboard_path.exists():
-            print(f"⚠️  分镜图不存在: {storyboard_path}，跳过")
+            print(f"⚠️  分镜图does not exist: {storyboard_path}，跳过")
             continue
 
         try:
@@ -498,7 +498,7 @@ def generate_scene_video(script_filename: str, scene_id: str) -> Path:
             break
 
     if not item:
-        raise ValueError(f"场景/片段 '{scene_id}' 不存在")
+        raise ValueError(f"场景/片段 '{scene_id}' does not exist")
 
     # 检查分镜图
     storyboard_image = item.get("generated_assets", {}).get("storyboard_image")
@@ -507,7 +507,7 @@ def generate_scene_video(script_filename: str, scene_id: str) -> Path:
 
     storyboard_path = project_dir / storyboard_image
     if not storyboard_path.exists():
-        raise FileNotFoundError(f"分镜图不存在: {storyboard_path}")
+        raise FileNotFoundError(f"分镜图does not exist: {storyboard_path}")
 
     # 直接使用 video_prompt 字段
     prompt = get_video_prompt(item)
@@ -649,7 +649,7 @@ def generate_selected_videos(
         if scene_id in items_by_id:
             selected_items.append(items_by_id[scene_id])
         else:
-            print(f"⚠️  场景/片段 '{scene_id}' 不存在，跳过")
+            print(f"⚠️  场景/片段 '{scene_id}' does not exist，跳过")
 
     if not selected_items:
         raise ValueError("没有找到任何有效的场景/片段")

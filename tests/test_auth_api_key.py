@@ -100,7 +100,7 @@ class TestVerifyAndGetPayloadAsync:
 
     @pytest.mark.asyncio
     async def test_api_key_not_found_raises_401(self):
-        """arc- 前缀但 key 不存在，抛出 401。"""
+        """arc- 前缀但 key does not exist，抛出 401。"""
         with patch("server.auth._verify_api_key", new=AsyncMock(return_value=None)):
             with pytest.raises(HTTPException) as exc_info:
                 await auth_module._verify_and_get_payload_async("arc-badkey")

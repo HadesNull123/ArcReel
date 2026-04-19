@@ -39,7 +39,7 @@ def migrate_project(pm: ProjectManager, project_name: str, dry_run: bool = False
     try:
         project_dir = pm.get_project_path(project_name)
     except FileNotFoundError:
-        print(f"  ❌ 项目不存在: {project_name}")
+        print(f"  ❌ Project does not exist: {project_name}")
         return False
 
     # 检查是否已有 project.json

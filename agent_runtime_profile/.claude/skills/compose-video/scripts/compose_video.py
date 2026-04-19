@@ -233,7 +233,7 @@ def compose_video(
 
         video_path = project_dir / video_clip
         if not video_path.exists():
-            raise FileNotFoundError(f"视频文件不存在: {video_path}")
+            raise FileNotFoundError(f"视频文件does not exist: {video_path}")
 
         video_paths.append(video_path)
         transitions.append(scene.get("transition_to_next", "cut"))
@@ -274,7 +274,7 @@ def compose_video(
             output_path = final_output
             print(f"✅ 背景音乐添加完成: {output_path}")
         else:
-            print(f"⚠️  背景音乐文件不存在: {music_path}")
+            print(f"⚠️  背景音乐文件does not exist: {music_path}")
 
     return output_path
 

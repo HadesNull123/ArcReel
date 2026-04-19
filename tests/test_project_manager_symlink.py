@@ -92,7 +92,7 @@ class TestRepairClaudeSymlink:
     def test_repair_fixes_broken_symlink(self, tmp_path):
         """损坏的软连接（is_symlink but not exists）应被删除并重建。"""
         pm, project_dir = self._make_env(tmp_path)
-        # 手动创建一个指向不存在路径的损坏软连接
+        # 手动创建一个指向does not exist路径的损坏软连接
         broken = project_dir / ".claude"
         broken.symlink_to(Path("../../nonexistent/.claude"))
         assert broken.is_symlink() and not broken.exists()
@@ -114,7 +114,7 @@ class TestRepairClaudeSymlink:
         assert Path((project_dir / ".claude").readlink()) == original_target
 
     def test_repair_skips_when_profile_missing(self, tmp_path):
-        """agent_runtime_profile 不存在时静默跳过，不报错。"""
+        """agent_runtime_profile does not exist时静默跳过，不报错。"""
         projects_root = tmp_path / "projects"
         projects_root.mkdir()
         pm = ProjectManager(projects_root)

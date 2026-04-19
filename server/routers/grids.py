@@ -172,6 +172,7 @@ async def generate_grid(
                     style=style,
                     aspect_ratio=aspect_ratio,
                     grid_aspect_ratio=chunk_layout.grid_aspect_ratio,
+                    target_language=project.get("target_language", "English"),
                 )
 
                 grid.prompt = prompt
@@ -204,7 +205,7 @@ async def generate_grid(
             success=True,
             grid_ids=grid_ids,
             task_ids=task_ids,
-            message=f"已提交 {len(grid_ids)} 个宫格生成任务",
+            message=f"Submitted {len(grid_ids)} grid generation tasks",
         )
 
     except FileNotFoundError as e:
@@ -212,7 +213,7 @@ async def generate_grid(
     except HTTPException:
         raise
     except Exception as e:
-        logger.exception("宫格生成请求处理失败")
+        logger.exception("Grid generation request processing failed")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -229,7 +230,7 @@ async def list_grids(project_name: str, _user: CurrentUser):
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        logger.exception("列出宫格图失败")
+        logger.exception("Failed to list grid images")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -238,20 +239,20 @@ async def list_grids(project_name: str, _user: CurrentUser):
 
 @router.get("/grids/{grid_id}")
 async def get_grid(project_name: str, grid_id: str, _user: CurrentUser):
-    """获取单个宫格图记录。"""
+    """Get a single grid record."""
     try:
         project_path = get_project_manager().get_project_path(project_name)
         gm = GridManager(project_path)
         grid = gm.get(grid_id)
         if grid is None:
-            raise HTTPException(status_code=404, detail=f"Grid {grid_id} 不存在")
+            raise HTTPException(status_code=404, detail=f"Grid {grid_id} does not exist")
         return grid.to_dict()
     except HTTPException:
         raise
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        logger.exception("获取宫格图失败")
+        logger.exception("Failed to get grid image")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -268,7 +269,7 @@ async def regenerate_grid(project_name: str, grid_id: str, _user: CurrentUser):
         gm = GridManager(project_path)
         grid = gm.get(grid_id)
         if grid is None:
-            raise HTTPException(status_code=404, detail=f"Grid {grid_id} 不存在")
+            raise HTTPException(status_code=404, detail=f"Grid {grid_id} does not exist")
 
         grid.status = "pending"
         grid.error_message = None
@@ -309,5 +310,5 @@ async def regenerate_grid(project_name: str, grid_id: str, _user: CurrentUser):
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        logger.exception("重新生成宫格图失败")
+        logger.exception("Failed to regenerate grid image")
         raise HTTPException(status_code=500, detail=str(e))

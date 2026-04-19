@@ -395,7 +395,7 @@ class TestPathTraversalProtection:
         pm = ProjectManager(tmp_path / "projects")
         pm.create_project("demo")
         pm.create_project_metadata("demo", "Demo")
-        with pytest.raises(ValueError, match="非法文件名"):
+        with pytest.raises(ValueError, match="Invalid filename"):
             pm.load_script("demo", "../../etc/passwd")
 
     def test_save_script_rejects_traversal_filename(self, tmp_path):
@@ -403,7 +403,7 @@ class TestPathTraversalProtection:
         pm.create_project("demo")
         pm.create_project_metadata("demo", "Demo")
         script = {"novel": {"chapter": "ch1"}, "scenes": [], "metadata": {}}
-        with pytest.raises(ValueError, match="非法文件名"):
+        with pytest.raises(ValueError, match="Invalid filename"):
             pm.save_script("demo", script, filename="../../evil.json")
 
     def test_safe_subpath_allows_normal_filenames(self, tmp_path):
@@ -483,7 +483,7 @@ class TestScenePropLifecycle:
         assert len(pending) == 2
         assert any(s["name"] == "客厅" for s in pending)
 
-        # 设置 sheet 但文件不存在 → 依然 pending
+        # 设置 sheet 但文件does not exist → 依然 pending
         pm.update_scene_sheet("demo", "客厅", "scenes/客厅.png")
         pending2 = pm.get_pending_project_scenes("demo")
         assert len(pending2) == 2

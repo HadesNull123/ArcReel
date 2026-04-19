@@ -31,7 +31,7 @@ def main():
         print(f"错误：源文件路径超出当前项目目录: {source_path}", file=sys.stderr)
         sys.exit(1)
     if not source_path.exists():
-        print(f"错误：源文件不存在: {source_path}", file=sys.stderr)
+        print(f"错误：源文件does not exist: {source_path}", file=sys.stderr)
         sys.exit(1)
 
     text = source_path.read_text(encoding="utf-8")

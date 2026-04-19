@@ -90,7 +90,7 @@ class TestStatusCalculator:
         assert status == "generated"
         assert script == script_data
 
-        # Case 2: 脚本不存在，draft 文件存在 → ("segmented", None)
+        # Case 2: 脚本does not exist，draft 文件存在 → ("segmented", None)
         draft_dir = project_path / "drafts" / "episode_2"
         draft_dir.mkdir(parents=True)
         (draft_dir / "step1_segments.md").write_text("ok")
@@ -99,7 +99,7 @@ class TestStatusCalculator:
         assert status2 == "segmented"
         assert script2 is None
 
-        # Case 3: 两者都不存在 → ("none", None)
+        # Case 3: 两者都does not exist → ("none", None)
         calc3 = StatusCalculator(_FakePM(project_root, {}, {}))
         status3, script3 = calc3._load_episode_script("demo", 3, "scripts/episode_3.json")
         assert status3 == "none"

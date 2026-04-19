@@ -65,7 +65,7 @@ class _FakePM:
 
     def create_project(self, name):
         if not name or not re.fullmatch(r"[A-Za-z0-9-]+", name):
-            raise ValueError("项目标识仅允许英文字母、数字和中划线")
+            raise ValueError("Project ID can only contain english letters, numbers, and hyphens")
         if name == "exists":
             raise FileExistsError(name)
         self.created.add(name)

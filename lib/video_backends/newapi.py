@@ -133,7 +133,7 @@ class NewAPIVideoBackend:
 
                 payload["image"] = image_to_base64_data_uri(start_path)
             else:
-                logger.warning("start_image 文件不存在，已忽略: %s", start_path)
+                logger.warning("start_image 文件does not exist，已忽略: %s", start_path)
         if request.reference_images:
             logger.warning(
                 "NewAPIVideoBackend 不支持多张参考图（reference_images=%d），已忽略",

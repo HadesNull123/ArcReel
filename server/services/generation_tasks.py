@@ -94,7 +94,7 @@ async def _create_custom_backend(provider_name: str, model_id: str | None, media
         db_id = parse_provider_id(provider_name)
         provider = await repo.get_provider(db_id)
         if provider is None:
-            raise ValueError(f"自定义供应商 {provider_name} 不存在")
+            raise ValueError(f"自定义供应商 {provider_name} does not exist")
         if model_id:
             # 校验 model_id 仍存在且已启用，否则回退到默认模型
             from sqlalchemy import select
@@ -109,7 +109,7 @@ async def _create_custom_backend(provider_name: str, model_id: str | None, media
             )
             result = await session.execute(stmt)
             if result.scalar_one_or_none() is None:
-                logger.warning("自定义模型 %s/%s 已不存在或已禁用，回退到默认模型", provider_name, model_id)
+                logger.warning("自定义模型 %s/%s 已does not exist或已禁用，回退到默认模型", provider_name, model_id)
                 model_id = None
 
         if not model_id:

@@ -168,7 +168,7 @@ class TestNewAPIVideoBackend:
         assert sent_image == expected
 
     async def test_start_image_missing_is_ignored(self, tmp_path: Path, caplog):
-        """start_image 文件不存在时应 warning 并走纯文生路径。"""
+        """start_image 文件does not exist时应 warning 并走纯文生路径。"""
         create_resp = _make_response(200, {"task_id": "t-missing", "status": "queued"})
         poll_resp = _make_response(
             200,
@@ -204,7 +204,7 @@ class TestNewAPIVideoBackend:
             )
 
         assert "image" not in mock_client.post.call_args.kwargs["json"]
-        assert any("start_image 文件不存在" in rec.message for rec in caplog.records)
+        assert any("start_image 文件does not exist" in rec.message for rec in caplog.records)
 
     async def test_failed_status_raises(self, tmp_path: Path):
         create_resp = _make_response(200, {"task_id": "t2", "status": "queued"})

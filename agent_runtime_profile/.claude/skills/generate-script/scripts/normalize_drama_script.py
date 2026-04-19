@@ -139,7 +139,7 @@ def main():
     else:
         source_dir = project_path / "source"
         if not source_dir.exists() or not any(source_dir.iterdir()):
-            print(f"❌ source/ 目录为空或不存在: {source_dir}")
+            print(f"❌ source/ 目录为空或does not exist: {source_dir}")
             sys.exit(1)
         # 按文件名排序读取所有文本文件
         texts = []

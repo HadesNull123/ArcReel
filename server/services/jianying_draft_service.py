@@ -47,7 +47,7 @@ class JianyingDraftService:
         episodes = project.get("episodes", [])
         ep_entry = next((e for e in episodes if e.get("episode") == episode), None)
         if ep_entry is None:
-            raise FileNotFoundError(f"第 {episode} 集不存在")
+            raise FileNotFoundError(f"第 {episode} 集does not exist")
 
         script_file = ep_entry.get("script_file", "")
         filename = Path(script_file).name
@@ -223,7 +223,7 @@ class JianyingDraftService:
             ZIP 文件路径（临时文件，调用方负责清理）
 
         Raises:
-            FileNotFoundError: 项目或剧本不存在
+            FileNotFoundError: 项目或剧本does not exist
             ValueError: 无可导出的视频片段
         """
         project = self.pm.load_project(project_name)

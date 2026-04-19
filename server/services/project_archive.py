@@ -177,7 +177,7 @@ class ProjectArchiveService:
     ) -> dict[str, list[dict[str, Any]]]:
         self._validate_scope(scope)
         if not self.project_manager.project_exists(project_name):
-            raise FileNotFoundError(f"项目 '{project_name}' 不存在或未初始化")
+            raise FileNotFoundError(f"项目 '{project_name}' does not exist或未初始化")
 
         temp_dir, _, _, diagnostics = self._prepare_export_snapshot(project_name, scope=scope)
         temp_dir.cleanup()
@@ -186,7 +186,7 @@ class ProjectArchiveService:
     def export_project(self, project_name: str, *, scope: str = "full") -> tuple[Path, str]:
         self._validate_scope(scope)
         if not self.project_manager.project_exists(project_name):
-            raise FileNotFoundError(f"项目 '{project_name}' 不存在或未初始化")
+            raise FileNotFoundError(f"项目 '{project_name}' does not exist或未初始化")
 
         fd, archive_path_str = tempfile.mkstemp(
             prefix=f"{project_name}-",
@@ -616,7 +616,7 @@ class ProjectArchiveService:
                     diagnostics.add(
                         "blocking",
                         "missing_script_file",
-                        f"{script_location}: 引用的文件不存在: {script_path_rel}",
+                        f"{script_location}: 引用的文件does not exist: {script_path_rel}",
                         location=script_location,
                     )
                     continue
@@ -794,7 +794,7 @@ class ProjectArchiveService:
                         "blocking",
                         f"missing_{asset_field.rstrip('s')}_definition",
                         (
-                            f"{items_key}[{index}]: {asset_field} 引用了不存在于 "
+                            f"{items_key}[{index}]: {asset_field} 引用了does not exist于 "
                             f"project.json 的{label}: {', '.join(missing)}"
                         ),
                         location=f"{location_prefix}.{asset_field}",

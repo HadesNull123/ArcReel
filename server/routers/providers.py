@@ -148,7 +148,7 @@ class UpdateCredentialRequest(BaseModel):
 
 
 def _validate_provider(provider_id: str, _t: Callable[..., str]) -> None:
-    """验证供应商 ID 是否存在，不存在则抛 404。"""
+    """验证供应商 ID 是否存在，does not exist则抛 404。"""
     if provider_id not in PROVIDER_REGISTRY:
         raise HTTPException(status_code=404, detail=_t("unknown_provider", provider_id=provider_id))
 
@@ -159,7 +159,7 @@ async def _get_credential_or_404(
     cred_id: int,
     _t: Callable[..., str],
 ) -> ProviderCredential:
-    """获取凭证并校验归属，不存在则抛 404。"""
+    """获取凭证并校验归属，does not exist则抛 404。"""
     cred = await repo.get_by_id(cred_id)
     if not cred or cred.provider != provider_id:
         raise HTTPException(status_code=404, detail=_t("credentials_not_found"))

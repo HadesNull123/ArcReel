@@ -50,7 +50,7 @@ class CustomProviderRepository(BaseRepository):
         return list(result.scalars())
 
     async def update_provider(self, provider_id: int, **kwargs) -> CustomProvider | None:
-        """更新供应商字段。返回更新后的对象，若不存在返回 None。"""
+        """更新供应商字段。返回更新后的对象，若does not exist返回 None。"""
         provider = await self.get_provider(provider_id)
         if provider is None:
             return None
@@ -90,7 +90,7 @@ class CustomProviderRepository(BaseRepository):
         return new_models
 
     async def update_model(self, model_id: int, **kwargs) -> CustomProviderModel | None:
-        """更新模型字段。返回更新后的对象，若不存在返回 None。"""
+        """更新模型字段。返回更新后的对象，若does not exist返回 None。"""
         stmt = select(CustomProviderModel).where(CustomProviderModel.id == model_id)
         result = await self.session.execute(stmt)
         model = result.scalar_one_or_none()

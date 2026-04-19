@@ -212,7 +212,7 @@ async def upload_file(
                             project_name, name, f"characters/{filename}"
                         )
                 except KeyError:
-                    pass  # 角色不存在，忽略
+                    pass  # 角色does not exist，忽略
 
             if upload_type == "character_ref" and name:
                 try:
@@ -221,7 +221,7 @@ async def upload_file(
                             project_name, name, f"characters/refs/{filename}"
                         )
                 except KeyError:
-                    pass  # 角色不存在，忽略
+                    pass  # 角色does not exist，忽略
 
             if upload_type == "scene" and name:
                 try:
@@ -232,7 +232,7 @@ async def upload_file(
                             f"scenes/{filename}",
                         )
                 except KeyError:
-                    pass  # 场景不存在，忽略
+                    pass  # 场景does not exist，忽略
 
             if upload_type == "prop" and name:
                 try:
@@ -243,7 +243,7 @@ async def upload_file(
                             f"props/{filename}",
                         )
                 except KeyError:
-                    pass  # 道具不存在，忽略
+                    pass  # 道具does not exist，忽略
 
             return {
                 "success": True,

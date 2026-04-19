@@ -172,7 +172,7 @@ class GeminiVideoBackend:
         # 5. 调用 API
         operation = await self._client.aio.models.generate_videos(model=self._video_model, source=source, config=config)
         op_name = getattr(operation, "name", "unknown")
-        logger.info("视频生成已提交, operation=%s", op_name)
+        logger.info("视频生成Submitted, operation=%s", op_name)
         return operation
 
     async def _poll_until_done(self, operation: Any, request: VideoGenerationRequest) -> VideoGenerationResult:

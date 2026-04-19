@@ -102,7 +102,7 @@ class TestCancelPreview:
         assert "只有排队中的任务可以取消" in resp.json()["detail"]
 
     def test_returns_400_for_nonexistent_task(self, monkeypatch):
-        fake = _FakeQueue(cancel_preview_error="任务 'missing' 不存在")
+        fake = _FakeQueue(cancel_preview_error="任务 'missing' does not exist")
         monkeypatch.setattr(tasks_router, "get_task_queue", lambda: fake)
 
         app = _make_app()
@@ -110,7 +110,7 @@ class TestCancelPreview:
             resp = client.get("/api/v1/tasks/missing/cancel-preview")
 
         assert resp.status_code == 400
-        assert "不存在" in resp.json()["detail"]
+        assert "does not exist" in resp.json()["detail"]
 
 
 # ---------------------------------------------------------------------------
@@ -137,7 +137,7 @@ class TestCancelTask:
         assert body["cancelled"][0]["task_id"] == "t1"
 
     def test_returns_400_for_nonexistent_task(self, monkeypatch):
-        fake = _FakeQueue(cancel_task_error="任务 'ghost' 不存在")
+        fake = _FakeQueue(cancel_task_error="任务 'ghost' does not exist")
         monkeypatch.setattr(tasks_router, "get_task_queue", lambda: fake)
 
         app = _make_app()
@@ -145,7 +145,7 @@ class TestCancelTask:
             resp = client.post("/api/v1/tasks/ghost/cancel")
 
         assert resp.status_code == 400
-        assert "不存在" in resp.json()["detail"]
+        assert "does not exist" in resp.json()["detail"]
 
     def test_returns_400_for_running_task(self, monkeypatch):
         fake = _FakeQueue(cancel_task_error="只有排队中的任务可以取消")

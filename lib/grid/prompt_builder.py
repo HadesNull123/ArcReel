@@ -21,8 +21,8 @@ def _extract_image_desc(scene: dict) -> str:
         if isinstance(composition, dict):
             comp_parts = [f"{k}: {v}" for k, v in composition.items() if v]
             if comp_parts:
-                parts.append("，".join(comp_parts))
-        return "；".join(parts) if parts else ""
+                parts.append(", ".join(comp_parts))
+        return "; ".join(parts) if parts else ""
     return str(image_prompt)
 
 
@@ -38,12 +38,12 @@ def _extract_action(scene: dict) -> str:
 
 
 def _compute_panel_aspect(grid_aspect_ratio: str, rows: int, cols: int) -> str:
-    """从整体宫格比例推算单格比例。
+    """Calculate the aspect ratio of a single cell from the overall grid aspect ratio.
 
-    例：grid 4:3, 3行2列 → panel (4/2):(3/3) = 2:1
+    Example: grid 4:3, 3 rows 2 cols -> panel (4/2):(3/3) = 2:1
     """
     gw, gh = (int(x) for x in grid_aspect_ratio.split(":"))
-    pw = gw * rows  # 交叉相乘避免浮点
+    pw = gw * rows
     ph = gh * cols
     g = gcd(pw, ph)
     return f"{pw // g}:{ph // g}"
@@ -59,6 +59,7 @@ def build_grid_prompt(
     aspect_ratio: str = "16:9",
     grid_aspect_ratio: str | None = None,
     reference_image_mapping: dict[str, str] | None = None,
+    target_language: str = "English",
 ) -> str:
     """Assemble a grid image generation prompt with first-last frame chain structure.
 
@@ -69,7 +70,9 @@ def build_grid_prompt(
         cols: Number of columns in the grid.
         style: Style description for the grid.
         aspect_ratio: Aspect ratio for each cell (default "16:9").
+        grid_aspect_ratio: Overall aspect ratio for the entire grid.
         reference_image_mapping: Optional mapping of image labels to character names.
+        target_language: The language the AI should output the prompt text in.
 
     Returns:
         Assembled prompt string.
@@ -77,12 +80,7 @@ def build_grid_prompt(
     total = rows * cols
     n_scenes = len(scenes)
 
-    # Number of content cells: first frame + (n_scenes - 1) transitions + last first frame
-    # Cell 0: first scene opening
-    # Cells 1..n_scenes-2: transitions between consecutive scenes
-    # Cell n_scenes-1: last scene opening
-    # Remaining cells: placeholders
-    n_content = n_scenes  # 1 first + (n-2) transitions + 1 last = n
+    n_content = n_scenes
 
     effective_grid_ar = grid_aspect_ratio or aspect_ratio
     panel_ar = _compute_panel_aspect(effective_grid_ar, rows, cols)
@@ -91,49 +89,51 @@ def build_grid_prompt(
 
     # Header
     lines.append(
-        f"你是一位专业的分镜画师。请严格按照 {rows}×{cols} 宫格布局生成一张包含恰好 {total} 个等大画格的联合图。"
+        f"You are a professional storyboard artist. Please strictly generate a {rows}x{cols} grid layout image containing exactly {total} equally sized panels."
     )
     lines.append("")
 
     # Layout requirements
-    lines.append("【布局要求】")
-    lines.append(f"- 恰好 {rows} 行 {cols} 列，共 {total} 个画格，阅读顺序：从左到右，从上到下")
-    lines.append(f"- 整体图片比例：{effective_grid_ar}")
-    lines.append(f"- 每个画格比例：{panel_ar}，所有画格大小完全相同")
-    lines.append("- 画格之间无边框、无间隙、无留白，紧密排列")
-    lines.append("- 不得合并画格、不得遗漏画格、不得错位排列")
-    lines.append("- 所有画格保持一致的角色外观、光线和色彩风格")
+    lines.append("【Layout Requirements】")
+    lines.append(f"- Exactly {rows} rows and {cols} columns, {total} panels in total. Reading order: Left to Right, Top to Bottom.")
+    lines.append(f"- Overall image aspect ratio: {effective_grid_ar}")
+    lines.append(f"- Each panel's aspect ratio: {panel_ar}. All panels must be exactly the same size.")
+    lines.append("- Panels must be tightly packed with NO borders, NO gaps, and NO white space between them.")
+    lines.append("- Do NOT merge panels, omit panels, or misalign panels.")
+    lines.append("- All panels must maintain consistent character appearance, lighting, and color grading style.")
     lines.append("")
 
     # Frame chain rhythm
-    lines.append("【帧链节奏】")
-    lines.append("本宫格采用首尾帧链式结构：")
-    lines.append("- 格0 是第一个场景的开场画面")
-    lines.append(f"- 格1~格{n_content - 1} 是相邻场景的过渡帧（前一场景的结束 = 后一场景的开始）")
-    lines.append("- 相邻格之间应体现画面的自然过渡和动作延续")
+    lines.append("【Frame Chain Rhythm】")
+    lines.append("This grid uses a chained first-to-last frame structure:")
+    lines.append("- Panel 0 is the opening frame of the first scene.")
+    lines.append(f"- Panels 1 to {n_content - 1} are transition frames between adjacent scenes (The end of the previous scene = The start of the next scene).")
+    lines.append("- Adjacent panels should depict a natural transition and continuation of action.")
     lines.append("")
 
     # Reference images (optional)
     if reference_image_mapping:
-        lines.append("【参考图说明】")
+        lines.append("【Reference Image Mapping】")
         for label, character in reference_image_mapping.items():
-            lines.append(f"- {label}：{character}")
+            lines.append(f"- {label}: {character}")
         lines.append("")
 
     # Cell contents
-    lines.append("【各格内容】")
+    lines.append("【Panel Content】")
+    lines.append(f"CRITICAL: Write all the detailed panel descriptions in {target_language}.")
+    lines.append("")
 
     for cell_idx in range(total):
         row_num = cell_idx // cols + 1
         col_num = cell_idx % cols + 1
-        position = f"row{row_num} col{col_num}"
+        position = f"row {row_num} col {col_num}"
 
         if cell_idx == 0:
             # First scene opening
             scene = scenes[0]
             scene_id = scene.get(id_field, "")
             image_desc = _extract_image_desc(scene)
-            lines.append(f"格{cell_idx}（{position}）— {scene_id}开场：")
+            lines.append(f"Panel {cell_idx} ({position}) — {scene_id} Opening:")
             lines.append(f"  {image_desc}")
 
         elif cell_idx < n_scenes:
@@ -144,32 +144,33 @@ def build_grid_prompt(
             next_scene_id = next_scene.get(id_field, "")
             prev_action = _extract_action(prev_scene)
             next_image_desc = _extract_image_desc(next_scene)
-            lines.append(f"格{cell_idx}（{position}）— {prev_scene_id}→{next_scene_id}过渡：")
-            lines.append(f"  {prev_action}，过渡到 {next_image_desc}")
+            lines.append(f"Panel {cell_idx} ({position}) — Transition from {prev_scene_id} to {next_scene_id}:")
+            lines.append(f"  Action from previous scene: {prev_action}, seamlessly transitioning into: {next_image_desc}")
 
         else:
             # Placeholder
-            lines.append(f"格{cell_idx}（{position}）— 空占位：纯灰色背景，无任何内容")
+            lines.append(f"Panel {cell_idx} ({position}) — Placeholder:")
+            lines.append("  Solid gray background, completely empty with no content.")
 
     lines.append("")
 
     # Style requirements
-    lines.append("【风格要求】")
+    lines.append("【Style Requirements】")
     lines.append(style)
     lines.append("")
 
     # Negative constraints
-    lines.append("【负面约束】")
-    lines.append("禁止出现以下任何元素：")
-    lines.append("- 文字、字幕、标签、标题、数字编号、时间戳")
-    lines.append("- 水印、logo、签名")
-    lines.append("- 白色边框、黑色边框、粗边框、装饰性边框")
-    lines.append("- 分隔线、间隙、间距、留白、padding、margin")
-    lines.append("- 白色背景、纯色背景条")
-    lines.append("- 合并的画格、缺失的画格、错位的画格")
-    lines.append("- 连续全景图（非分格）、单张大图")
-    lines.append("- 模糊、低画质、噪点")
-    lines.append("- 拼贴感、蒙太奇拼接感")
-    lines.append("- 画格大小不一致、画格比例不一致")
+    lines.append("【Negative Prompts (MUST AVOID)】")
+    lines.append("DO NOT include any of the following elements:")
+    lines.append("- Text, subtitles, labels, titles, numbers, or timestamps.")
+    lines.append("- Watermarks, logos, or signatures.")
+    lines.append("- White borders, black borders, thick borders, or decorative frames.")
+    lines.append("- Divider lines, gaps, spacing, white space, padding, or margin between panels.")
+    lines.append("- Solid white background or solid color bars.")
+    lines.append("- Merged panels, missing panels, or misaligned panels.")
+    lines.append("- A continuous panoramic image (un-paneled) or a single large image.")
+    lines.append("- Blurriness, low resolution, or noise.")
+    lines.append("- Collage feel or unnatural montage stitching.")
+    lines.append("- Inconsistent panel sizes or aspect ratios.")
 
     return "\n".join(lines)

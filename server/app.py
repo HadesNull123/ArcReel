@@ -231,7 +231,7 @@ async def serve_skill_md(request: Request) -> Response:
 
     exists, template = await asyncio.to_thread(_read)
     if not exists:
-        return PlainTextResponse("skill.md 模板不存在", status_code=404)
+        return PlainTextResponse("skill.md 模板does not exist", status_code=404)
 
     # 从请求推断 base URL；仅信任 x-forwarded-proto（反向代理标准头），
     # host 使用连接实际目标地址，不接受可被用户伪造的 x-forwarded-host。

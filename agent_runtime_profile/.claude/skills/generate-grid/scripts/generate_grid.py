@@ -129,7 +129,7 @@ def generate_grid(
         print("没有需要生成的宫格组")
         return [], []
 
-    print(f"\n🚀 已提交 {len(grid_task_pairs)} 个宫格生成任务，等待完成...\n")
+    print(f"\n🚀 Submitted {len(grid_task_pairs)} grid generation tasks，等待完成...\n")
 
     successes: list[str] = []
     failures: list[tuple[str, str]] = []

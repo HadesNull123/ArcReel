@@ -206,7 +206,7 @@ class TestGenerateI2I:
         assert len(call_kwargs["image_urls"]) == 2
 
     async def test_i2i_skips_missing_ref(self, backend, tmp_path):
-        """参考图不存在时退化为 T2I。"""
+        """参考图does not exist时退化为 T2I。"""
         output = tmp_path / "output.png"
         mock_response = MagicMock()
         mock_response.respect_moderation = True

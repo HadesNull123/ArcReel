@@ -112,7 +112,7 @@ def main():
     projects_root = Path(args.projects_root)
 
     if not projects_root.exists():
-        print(f"❌ 项目根目录不存在: {projects_root}")
+        print(f"❌ 项目根目录does not exist: {projects_root}")
         return
 
     if args.dry_run:

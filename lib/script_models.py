@@ -47,44 +47,44 @@ TransitionType = Literal[
 class Dialogue(BaseModel):
     """对话条目"""
 
-    speaker: str = Field(description="说话人名称")
-    line: str = Field(description="对话内容")
+    speaker: str = Field(description="Speaker name")
+    line: str = Field(description="Dialogue content")
 
 
 class Composition(BaseModel):
     """构图信息"""
 
-    shot_type: ShotType = Field(description="镜头类型")
-    lighting: str = Field(description="光线描述，包含光源、方向和氛围")
-    ambiance: str = Field(description="整体氛围，与情绪基调匹配")
+    shot_type: ShotType = Field(description="Shot type")
+    lighting: str = Field(description="Lighting description, including light source, direction, and atmosphere")
+    ambiance: str = Field(description="Overall ambiance, matching the emotional tone")
 
 
 class ImagePrompt(BaseModel):
     """分镜图生成 Prompt"""
 
-    scene: str = Field(description="场景描述：角色位置、表情、动作、环境细节")
-    composition: Composition = Field(description="构图信息")
+    scene: str = Field(description="Scene description: character position, expression, action, and environmental details")
+    composition: Composition = Field(description="Composition info")
 
 
 class VideoPrompt(BaseModel):
     """视频生成 Prompt"""
 
-    action: str = Field(description="动作描述：角色在该片段内的具体动作")
-    camera_motion: CameraMotion = Field(description="镜头运动")
-    ambiance_audio: str = Field(description="环境音效：仅描述场景内的声音，禁止 BGM")
-    dialogue: list[Dialogue] = Field(default_factory=list, description="对话列表，仅当原文有引号对话时填写")
+    action: str = Field(description="Action description: specific character actions in this segment")
+    camera_motion: CameraMotion = Field(description="Camera motion")
+    ambiance_audio: str = Field(description="Ambient audio: describe only in-scene sounds, NO BGM")
+    dialogue: list[Dialogue] = Field(default_factory=list, description="List of dialogues, fill ONLY if the original text contains quoted dialogues")
 
 
 class GeneratedAssets(BaseModel):
     """生成资源状态（初始化为空）"""
 
-    storyboard_image: str | None = Field(default=None, description="分镜图路径")
-    storyboard_last_image: str | None = Field(default=None, description="分镜图最后一帧路径")
-    grid_id: str | None = Field(default=None, description="关联的网格图生成 ID")
-    grid_cell_index: int | None = Field(default=None, description="在网格图中的单元格索引")
-    video_clip: str | None = Field(default=None, description="视频片段路径")
-    video_uri: str | None = Field(default=None, description="视频 URI")
-    status: Literal["pending", "storyboard_ready", "completed"] = Field(default="pending", description="生成状态")
+    storyboard_image: str | None = Field(default=None, description="Storyboard image path")
+    storyboard_last_image: str | None = Field(default=None, description="Storyboard last frame path")
+    grid_id: str | None = Field(default=None, description="Associated grid generation ID")
+    grid_cell_index: int | None = Field(default=None, description="Cell index in the grid")
+    video_clip: str | None = Field(default=None, description="Video clip path")
+    video_uri: str | None = Field(default=None, description="Video URI")
+    status: Literal["pending", "storyboard_ready", "completed"] = Field(default="pending", description="Generation status")
 
 
 # ============ 说书模式（Narration） ============
@@ -93,38 +93,38 @@ class GeneratedAssets(BaseModel):
 class NarrationSegment(BaseModel):
     """说书模式的片段"""
 
-    segment_id: str = Field(description="片段 ID，格式 E{集}S{序号} 或 E{集}S{序号}_{子序号}")
-    episode: int = Field(description="所属剧集")
-    duration_seconds: int = Field(ge=1, le=60, description="片段时长（秒）")
-    segment_break: bool = Field(default=False, description="是否为场景切换点")
-    novel_text: str = Field(description="小说原文（必须原样保留，用于后期配音）")
-    characters_in_segment: list[str] = Field(description="出场角色名称列表")
-    scenes: list[str] = Field(default_factory=list, description="出场场景名称列表")
-    props: list[str] = Field(default_factory=list, description="出场道具名称列表")
-    image_prompt: ImagePrompt = Field(description="分镜图生成提示词")
-    video_prompt: VideoPrompt = Field(description="视频生成提示词")
-    transition_to_next: TransitionType = Field(default="cut", description="转场类型")
-    note: str | None = Field(default=None, description="用户备注（不参与生成）")
-    generated_assets: GeneratedAssets = Field(default_factory=GeneratedAssets, description="生成资源状态")
+    segment_id: str = Field(description="Segment ID, format E{episode}S{sequence} or E{episode}S{sequence}_{subsequence}")
+    episode: int = Field(description="Episode number")
+    duration_seconds: int = Field(ge=1, le=60, description="Segment duration (seconds)")
+    segment_break: bool = Field(default=False, description="Whether this is a scene break")
+    novel_text: str = Field(description="Original novel text (MUST be kept exactly as-is, used for narration dubbing)")
+    characters_in_segment: list[str] = Field(description="List of character names appearing in the segment")
+    scenes: list[str] = Field(default_factory=list, description="List of scene names appearing in the segment")
+    props: list[str] = Field(default_factory=list, description="List of prop names appearing in the segment")
+    image_prompt: ImagePrompt = Field(description="Image generation prompt")
+    video_prompt: VideoPrompt = Field(description="Video generation prompt")
+    transition_to_next: TransitionType = Field(default="cut", description="Transition type")
+    note: str | None = Field(default=None, description="User note (not used for generation)")
+    generated_assets: GeneratedAssets = Field(default_factory=GeneratedAssets, description="Generated assets status")
 
 
 class NovelInfo(BaseModel):
     """小说来源信息"""
 
-    title: str = Field(description="小说标题")
-    chapter: str = Field(description="章节名称")
+    title: str = Field(description="Novel title")
+    chapter: str = Field(description="Chapter name")
 
 
 class NarrationEpisodeScript(BaseModel):
     """说书模式剧集脚本"""
 
-    episode: int = Field(description="剧集编号")
-    title: str = Field(description="剧集标题")
-    content_mode: Literal["narration"] = Field(default="narration", description="内容模式")
-    duration_seconds: int = Field(default=0, description="总时长（秒）")
-    summary: str = Field(description="剧集摘要")
-    novel: NovelInfo = Field(description="小说来源信息")
-    segments: list[NarrationSegment] = Field(description="片段列表")
+    episode: int = Field(description="Episode number")
+    title: str = Field(description="Episode title")
+    content_mode: Literal["narration"] = Field(default="narration", description="Content mode")
+    duration_seconds: int = Field(default=0, description="Total duration (seconds)")
+    summary: str = Field(description="Episode summary")
+    novel: NovelInfo = Field(description="Novel source info")
+    segments: list[NarrationSegment] = Field(description="List of segments")
 
 
 # ============ 剧集动画模式（Drama） ============
@@ -133,30 +133,30 @@ class NarrationEpisodeScript(BaseModel):
 class DramaScene(BaseModel):
     """剧集动画模式的场景"""
 
-    scene_id: str = Field(description="场景 ID，格式 E{集}S{序号} 或 E{集}S{序号}_{子序号}")
-    duration_seconds: int = Field(default=8, ge=1, le=60, description="场景时长（秒）")
-    segment_break: bool = Field(default=False, description="是否为场景切换点")
-    scene_type: str = Field(default="剧情", description="场景类型")
-    characters_in_scene: list[str] = Field(description="出场角色名称列表")
-    scenes: list[str] = Field(default_factory=list, description="出场场景名称列表")
-    props: list[str] = Field(default_factory=list, description="出场道具名称列表")
-    image_prompt: ImagePrompt = Field(description="分镜图生成提示词")
-    video_prompt: VideoPrompt = Field(description="视频生成提示词")
-    transition_to_next: TransitionType = Field(default="cut", description="转场类型")
-    note: str | None = Field(default=None, description="用户备注（不参与生成）")
-    generated_assets: GeneratedAssets = Field(default_factory=GeneratedAssets, description="生成资源状态")
+    scene_id: str = Field(description="Scene ID, format E{episode}S{sequence} or E{episode}S{sequence}_{subsequence}")
+    duration_seconds: int = Field(default=8, ge=1, le=60, description="Scene duration (seconds)")
+    segment_break: bool = Field(default=False, description="Whether this is a scene break")
+    scene_type: str = Field(default="剧情", description="Scene type")
+    characters_in_scene: list[str] = Field(description="List of character names appearing in the segment")
+    scenes: list[str] = Field(default_factory=list, description="List of scene names appearing in the segment")
+    props: list[str] = Field(default_factory=list, description="List of prop names appearing in the segment")
+    image_prompt: ImagePrompt = Field(description="Image generation prompt")
+    video_prompt: VideoPrompt = Field(description="Video generation prompt")
+    transition_to_next: TransitionType = Field(default="cut", description="Transition type")
+    note: str | None = Field(default=None, description="User note (not used for generation)")
+    generated_assets: GeneratedAssets = Field(default_factory=GeneratedAssets, description="Generated assets status")
 
 
 class DramaEpisodeScript(BaseModel):
     """剧集动画模式剧集脚本"""
 
-    episode: int = Field(description="剧集编号")
-    title: str = Field(description="剧集标题")
-    content_mode: Literal["drama"] = Field(default="drama", description="内容模式")
-    duration_seconds: int = Field(default=0, description="总时长（秒）")
-    summary: str = Field(description="剧集摘要")
-    novel: NovelInfo = Field(description="小说来源信息")
-    scenes: list[DramaScene] = Field(description="场景列表")
+    episode: int = Field(description="Episode number")
+    title: str = Field(description="Episode title")
+    content_mode: Literal["drama"] = Field(default="drama", description="Content mode")
+    duration_seconds: int = Field(default=0, description="Total duration (seconds)")
+    summary: str = Field(description="Episode summary")
+    novel: NovelInfo = Field(description="Novel source info")
+    scenes: list[DramaScene] = Field(description="List of scenes")
 
 
 # ============ 参考生视频模式（Reference Video） ============
@@ -165,31 +165,31 @@ class DramaEpisodeScript(BaseModel):
 class Shot(BaseModel):
     """参考视频单元内的一个镜头。"""
 
-    duration: int = Field(ge=1, le=15, description="该镜头时长（秒）")
-    text: str = Field(description="镜头描述，可包含 @角色/@场景/@道具 引用")
+    duration: int = Field(ge=1, le=15, description="Shot duration (seconds)")
+    text: str = Field(description="Shot description, can contain @character/@scene/@prop references")
 
 
 class ReferenceResource(BaseModel):
     """参考图引用——只存名称 + 类型，具体路径从 project.json 对应 bucket 读时解析。"""
 
-    type: Literal["character", "scene", "prop"] = Field(description="引用的资源类型")
-    name: str = Field(description="角色/场景/道具名称，必须在 project.json 对应 bucket 中已注册")
+    type: Literal["character", "scene", "prop"] = Field(description="Referenced resource type")
+    name: str = Field(description="Character/scene/prop name, must be registered in the corresponding project.json bucket")
 
 
 class ReferenceVideoUnit(BaseModel):
     """参考视频单元——一个视频文件的最小生成粒度。"""
 
-    unit_id: str = Field(description="格式 E{集}U{序号}")
-    shots: list[Shot] = Field(min_length=1, max_length=4, description="1-4 个 shot")
+    unit_id: str = Field(description="Format E{episode}U{sequence}")
+    shots: list[Shot] = Field(min_length=1, max_length=4, description="1-4 shots")
     references: list[ReferenceResource] = Field(
         default_factory=list,
-        description="按顺序决定 [图N] 编号",
+        description="Determines [Image N] numbering in order",
     )
-    duration_seconds: int = Field(description="派生字段：所有 shot 时长之和")
-    duration_override: bool = Field(default=False, description="true 时停止自动派生")
-    transition_to_next: TransitionType = Field(default="cut", description="转场类型")
-    note: str | None = Field(default=None, description="用户备注")
-    generated_assets: GeneratedAssets = Field(default_factory=GeneratedAssets, description="生成资源状态")
+    duration_seconds: int = Field(description="Derived field: sum of all shot durations")
+    duration_override: bool = Field(default=False, description="Stop auto-derivation when true")
+    transition_to_next: TransitionType = Field(default="cut", description="Transition type")
+    note: str | None = Field(default=None, description="User note")
+    generated_assets: GeneratedAssets = Field(default_factory=GeneratedAssets, description="Generated assets status")
 
     @model_validator(mode="after")
     def _check_duration_consistency(self) -> "ReferenceVideoUnit":
@@ -206,10 +206,10 @@ class ReferenceVideoUnit(BaseModel):
 class ReferenceVideoScript(BaseModel):
     """参考生视频模式剧集脚本。"""
 
-    episode: int = Field(description="剧集编号")
-    title: str = Field(description="剧集标题")
-    content_mode: Literal["reference_video"] = Field(default="reference_video", description="内容模式")
-    duration_seconds: int = Field(default=0, description="总时长（秒）")
-    summary: str = Field(description="剧集摘要")
-    novel: NovelInfo = Field(description="小说来源信息")
-    video_units: list[ReferenceVideoUnit] = Field(description="视频单元列表")
+    episode: int = Field(description="Episode number")
+    title: str = Field(description="Episode title")
+    content_mode: Literal["reference_video"] = Field(default="reference_video", description="Content mode")
+    duration_seconds: int = Field(default=0, description="Total duration (seconds)")
+    summary: str = Field(description="Episode summary")
+    novel: NovelInfo = Field(description="Novel source info")
+    video_units: list[ReferenceVideoUnit] = Field(description="List of video units")

@@ -229,7 +229,7 @@ API_KEY_PREFIX = "arc-"
 API_KEY_CACHE_TTL = 300  # 5 分钟
 
 # LRU 缓存：key_hash → (payload_dict | None, expires_at_timestamp)
-# payload 为 None 表示 key 不存在或已过期（负缓存）
+# payload 为 None 表示 key does not exist或已过期（负缓存）
 # 使用 OrderedDict 实现 LRU：命中时 move_to_end，淘汰时 popitem(last=False)
 _api_key_cache: OrderedDict[str, tuple[dict | None, float]] = OrderedDict()
 _API_KEY_CACHE_MAX = 512
@@ -279,7 +279,7 @@ def _set_api_key_cache(key_hash: str, payload: dict | None, expires_at_ts: float
 
 
 async def _verify_api_key(token: str) -> dict | None:
-    """验证 API Key token，返回 payload dict 或 None（失败/过期/不存在）。
+    """验证 API Key token，返回 payload dict 或 None（失败/过期/does not exist）。
 
     内部先查缓存，缓存未命中再查数据库。
     查库成功后更新 last_used_at（后台异步，不阻塞响应）。
@@ -362,7 +362,7 @@ async def _verify_and_get_payload_async(token: str) -> dict:
         if payload is None:
             raise HTTPException(
                 status_code=401,
-                detail="API Key 无效、已过期或不存在",
+                detail="API Key 无效、已过期或does not exist",
                 headers={"WWW-Authenticate": "Bearer"},
             )
         return payload

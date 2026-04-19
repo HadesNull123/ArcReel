@@ -94,7 +94,7 @@ class OpenAIImageBackend:
                     try:
                         files.append(stack.enter_context(open(ref_path, "rb")))
                     except FileNotFoundError:
-                        logger.warning("参考图不存在，跳过: %s", ref_path)
+                        logger.warning("参考图does not exist，跳过: %s", ref_path)
                 # 把已打开的句柄所有权移交给调用者
                 return stack.pop_all(), files
             except BaseException:

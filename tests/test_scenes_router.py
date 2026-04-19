@@ -77,12 +77,12 @@ class TestScenesRouter:
             )
             assert dup_resp.status_code == 409
 
-            # 不存在的场景 → 404
+            # does not exist的场景 → 404
             missing_resp = client.patch(
-                "/api/v1/projects/demo/scenes/不存在",
+                "/api/v1/projects/demo/scenes/does not exist",
                 json={"description": "x"},
             )
             assert missing_resp.status_code == 404
 
-            missing_del = client.delete("/api/v1/projects/demo/scenes/不存在")
+            missing_del = client.delete("/api/v1/projects/demo/scenes/does not exist")
             assert missing_del.status_code == 404

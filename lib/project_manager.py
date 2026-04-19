@@ -1,7 +1,7 @@
 """
-项目文件管理器
+Project File Manager
 
-管理视频项目的目录结构、分镜剧本读写、状态追踪。
+Manages video project directory structure, storyboard read/write, and status tracking.
 """
 
 import fcntl
@@ -50,16 +50,16 @@ def effective_mode(*, project: dict, episode: dict) -> str:
 
 
 class ProjectOverview(BaseModel):
-    """项目概述数据模型，用于 Gemini Structured Outputs"""
+    """Project overview data model for Gemini Structured Outputs"""
 
-    synopsis: str = Field(description="故事梗概，200-300字，概括主线剧情")
-    genre: str = Field(description="题材类型，如：古装宫斗、现代悬疑、玄幻修仙")
-    theme: str = Field(description="核心主题，如：复仇与救赎、成长与蜕变")
-    world_setting: str = Field(description="时代背景和世界观设定，100-200字")
+    synopsis: str = Field(description="Story synopsis, 200-300 words, summarizing the main plot")
+    genre: str = Field(description="Genre, e.g., Historical drama, Modern suspense, Xianxia fantasy")
+    theme: str = Field(description="Core theme, e.g., Revenge and redemption, Growth and transformation")
+    world_setting: str = Field(description="Historical background and world-building setting, 100-200 words")
 
 
 class ProjectManager:
-    """视频项目管理器"""
+    """Video Project Manager"""
 
     # 项目子目录结构
     SUBDIRS = [
@@ -84,9 +84,9 @@ class ProjectManager:
         """Validate and normalize a project identifier."""
         normalized = str(name).strip()
         if not normalized:
-            raise ValueError("项目标识不能为空")
+            raise ValueError("Project ID cannot be empty")
         if not PROJECT_NAME_PATTERN.fullmatch(normalized):
-            raise ValueError("项目标识仅允许英文字母、数字和中划线")
+            raise ValueError("Project ID can only contain english letters, numbers, and hyphens")
         return normalized
 
     @staticmethod
@@ -116,7 +116,7 @@ class ProjectManager:
         projects_root = cwd.parent
         pm = cls(projects_root)
         if not (projects_root / project_name / cls.PROJECT_FILE).exists():
-            raise FileNotFoundError(f"当前目录不是有效的项目目录: {cwd}")
+            raise FileNotFoundError(f"Current directory is not a valid project directory: {cwd}")
         return pm, project_name
 
     def __init__(self, projects_root: str | None = None):
@@ -204,7 +204,7 @@ class ProjectManager:
                     symlink_path.symlink_to(REL_TARGETS[name])
                     stats["repaired"] += 1
                 except OSError as e:
-                    logger.warning("无法修复项目 %s 的 %s 符号链接: %s", project_dir.name, name, e)
+                    logger.warning("Failed to fix project %s 的 %s 符号链接: %s", project_dir.name, name, e)
                     stats["errors"] += 1
             elif not symlink_path.exists() and not symlink_path.is_symlink():
                 # 缺失
@@ -245,10 +245,10 @@ class ProjectManager:
         real = os.path.realpath(self.projects_root / name)
         base = os.path.realpath(self.projects_root) + os.sep
         if not real.startswith(base):
-            raise ValueError(f"非法项目名称: '{name}'")
+            raise ValueError(f"Invalid project name: '{name}'")
         project_dir = Path(real)
         if not project_dir.exists():
-            raise FileNotFoundError(f"项目 '{name}' 不存在")
+            raise FileNotFoundError(f"项目 '{name}' does not exist")
         return project_dir
 
     @staticmethod
@@ -257,12 +257,12 @@ class ProjectManager:
         real = os.path.realpath(base_dir / filename)
         bound = os.path.realpath(base_dir) + os.sep
         if not real.startswith(bound):
-            raise ValueError(f"非法文件名: '{filename}'")
+            raise ValueError(f"Invalid filename: '{filename}'")
         return real
 
     def get_project_status(self, name: str) -> dict[str, Any]:
         """
-        获取项目状态
+        Get project status
 
         Returns:
             包含各阶段完成情况的字典
@@ -499,7 +499,7 @@ class ProjectManager:
         real = self._safe_subpath(project_dir / "scripts", filename)
 
         if not os.path.exists(real):
-            raise FileNotFoundError(f"剧本文件不存在: {real}")
+            raise FileNotFoundError(f"剧本文件does not exist: {real}")
 
         with open(real, encoding="utf-8") as f:  # noqa: PTH123
             return json.load(f)
@@ -517,7 +517,7 @@ class ProjectManager:
         script = self.load_script(project_name, script_filename)
 
         if name not in script["characters"]:
-            raise KeyError(f"角色 '{name}' 不存在")
+            raise KeyError(f"角色 '{name}' does not exist")
 
         script["characters"][name]["character_sheet"] = sheet_path
         self.save_script(project_name, script, script_filename)
@@ -845,7 +845,7 @@ class ProjectManager:
                 self.save_script(project_name, script, script_filename)
                 return script
 
-        raise KeyError(f"场景 '{scene_id}' 不存在")
+        raise KeyError(f"场景 '{scene_id}' does not exist")
 
     def batch_update_scene_assets(
         self,
@@ -1010,7 +1010,7 @@ class ProjectManager:
         project_file = self._get_project_file_path(project_name)
 
         if not project_file.exists():
-            raise FileNotFoundError(f"项目元数据文件不存在: {project_file}")
+            raise FileNotFoundError(f"项目元数据文件does not exist: {project_file}")
 
         migrated = False
         with self._project_lock(project_name):
@@ -1281,7 +1281,7 @@ class ProjectManager:
         project = self.load_project(project_name)
 
         if name not in project["characters"]:
-            raise KeyError(f"角色 '{name}' 不存在")
+            raise KeyError(f"角色 '{name}' does not exist")
 
         project["characters"][name]["character_sheet"] = sheet_path
         self.save_project(project_name, project)
@@ -1302,7 +1302,7 @@ class ProjectManager:
         project = self.load_project(project_name)
 
         if "characters" not in project or char_name not in project["characters"]:
-            raise KeyError(f"角色 '{char_name}' 不存在")
+            raise KeyError(f"角色 '{char_name}' does not exist")
 
         project["characters"][char_name]["reference_image"] = ref_path
         self.save_project(project_name, project)
@@ -1313,7 +1313,7 @@ class ProjectManager:
         project = self.load_project(project_name)
 
         if name not in project["characters"]:
-            raise KeyError(f"角色 '{name}' 不存在")
+            raise KeyError(f"角色 '{name}' does not exist")
 
         return project["characters"][name]
 
@@ -1323,7 +1323,7 @@ class ProjectManager:
         """更新场景设计图路径"""
         project = self.load_project(project_name)
         if name not in project.get("scenes", {}):
-            raise KeyError(f"场景 '{name}' 不存在")
+            raise KeyError(f"场景 '{name}' does not exist")
         project["scenes"][name]["scene_sheet"] = sheet_path
         self.save_project(project_name, project)
         return project
@@ -1332,11 +1332,11 @@ class ProjectManager:
         """获取场景定义"""
         project = self.load_project(project_name)
         if name not in project.get("scenes", {}):
-            raise KeyError(f"场景 '{name}' 不存在")
+            raise KeyError(f"场景 '{name}' does not exist")
         return project["scenes"][name]
 
     def get_pending_project_scenes(self, project_name: str) -> list[dict]:
-        """无 scene_sheet 或文件不存在的场景。"""
+        """无 scene_sheet 或文件does not exist的场景。"""
         project = self.load_project(project_name)
         project_dir = self.get_project_path(project_name)
         pending = []
@@ -1356,7 +1356,7 @@ class ProjectManager:
         """更新道具设计图路径"""
         project = self.load_project(project_name)
         if name not in project.get("props", {}):
-            raise KeyError(f"道具 '{name}' 不存在")
+            raise KeyError(f"道具 '{name}' does not exist")
         project["props"][name]["prop_sheet"] = sheet_path
         self.save_project(project_name, project)
         return project
@@ -1365,11 +1365,11 @@ class ProjectManager:
         """获取道具定义"""
         project = self.load_project(project_name)
         if name not in project.get("props", {}):
-            raise KeyError(f"道具 '{name}' 不存在")
+            raise KeyError(f"道具 '{name}' does not exist")
         return project["props"][name]
 
     def get_pending_project_props(self, project_name: str) -> list[dict]:
-        """无 prop_sheet 或文件不存在的道具。"""
+        """无 prop_sheet 或文件does not exist的道具。"""
         project = self.load_project(project_name)
         project_dir = self.get_project_path(project_name)
         pending = []
@@ -1391,7 +1391,7 @@ class ProjectManager:
             project_name: 项目名称
 
         Returns:
-            待处理角色列表（无 character_sheet 或文件不存在）
+            待处理角色列表（无 character_sheet 或文件does not exist）
         """
         project = self.load_project(project_name)
         project_dir = self.get_project_path(project_name)
