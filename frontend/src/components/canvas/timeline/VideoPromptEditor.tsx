@@ -55,6 +55,12 @@ export function VideoPromptEditor({
             onChange={(v) => onUpdate({ ambiance_audio: v })}
             placeholder={t("ambiance_audio_placeholder")}
           />
+          <CompactInput
+            label={t("vfx_motion_label")}
+            value={prompt.vfx_motion || ""}
+            onChange={(v) => onUpdate({ vfx_motion: v })}
+            placeholder={t("vfx_motion_placeholder")}
+          />
           <DialogueListEditor
             dialogue={prompt.dialogue ?? []}
             onChange={(d: Dialogue[]) => onUpdate({ dialogue: d })}

@@ -52,6 +52,7 @@ export interface Composition {
 export interface ImagePrompt {
   scene: string;
   composition: Composition;
+  vfx?: string | null;
 }
 
 export interface VideoPrompt {
@@ -59,6 +60,7 @@ export interface VideoPrompt {
   camera_motion: CameraMotion;
   ambiance_audio: string;
   dialogue: Dialogue[];
+  vfx_motion?: string | null;
 }
 
 export interface GeneratedAssets {

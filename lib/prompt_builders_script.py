@@ -149,6 +149,7 @@ e. **image_prompt**: Generate an object containing the following fields:
      - shot_type: Shot type (Extreme Close-up, Close-up, Medium Close-up, Medium Shot, Medium Long Shot, Long Shot, Extreme Long Shot, Over-the-shoulder, Point-of-view)
      - lighting: Describe the specific light source type, direction, and color temperature in {target_language} (e.g., "warm yellow morning light coming through the left window")
      - ambiance: Describe visible environmental effects in {target_language} (e.g., "misty", "dust flying"), avoid abstract emotional words
+     - vfx: Describe any visual effects visible in the frame (e.g., magical glowing, fire, lasers) in {target_language}. If none, leave empty.
 
 f. **video_prompt**: Generate an object containing the following fields:
    - action: Precisely describe in {target_language} the specific actions of the subject during this duration (head, hands, body movements) and micro-expressions.
@@ -167,6 +168,7 @@ f. **video_prompt**: Generate an object containing the following fields:
    - ambiance_audio: Describe in {target_language} the diegetic sound—ambient sounds, footsteps, object sounds.
      Only describe sounds that genuinely exist within the scene. Exclude music, BGM, narration, voiceovers.
    - dialogue: Array of {{speaker, line}}. Fill in only when there is quoted dialogue in the original text. speaker must come from characters_in_segment.
+   - vfx_motion: Describe the dynamic behavior of visual effects (e.g., aura pulsating, explosion expanding) in {target_language}. If none, leave empty.
 
 g. **segment_break**: Set to true if marked as "Yes" in the segment table.
 
@@ -286,6 +288,7 @@ d. **image_prompt**: Generate an object containing the following fields:
      - shot_type: Shot type (Extreme Close-up, Close-up, Medium Close-up, Medium Shot, Medium Long Shot, Long Shot, Extreme Long Shot, Over-the-shoulder, Point-of-view)
      - lighting: Describe the specific light source type, direction, and color temperature in {target_language} (e.g., "warm yellow morning light coming through the left window")
      - ambiance: Describe visible environmental effects in {target_language} (e.g., "misty", "dust flying"), avoid abstract emotional words
+     - vfx: Describe any visual effects visible in the frame (e.g., magical glowing, fire, lasers) in {target_language}. If none, leave empty.
 
 e. **video_prompt**: Generate an object containing the following fields:
    - action: Precisely describe in {target_language} the specific actions of the subject during this duration (head, hands, body movements) and micro-expressions.
@@ -304,6 +307,7 @@ e. **video_prompt**: Generate an object containing the following fields:
    - ambiance_audio: Describe in {target_language} the diegetic sound—ambient sounds, footsteps, object sounds.
      Only describe sounds that genuinely exist within the scene. Exclude music, BGM, narration, voiceovers.
    - dialogue: Array of {{speaker, line}}. Contains character dialogue. speaker must come from characters_in_scene.
+   - vfx_motion: Describe the dynamic behavior of visual effects (e.g., aura pulsating, explosion expanding) in {target_language}. If none, leave empty.
 
 f. **segment_break**: Set to true if marked as "Yes" in the shot table.
 

@@ -72,6 +72,12 @@ export function ImagePromptEditor({
             }
             placeholder={t("ambiance_placeholder")}
           />
+          <CompactInput
+            label={t("vfx_label")}
+            value={prompt.vfx || ""}
+            onChange={(v) => onUpdate({ vfx: v })}
+            placeholder={t("vfx_placeholder")}
+          />
         </div>
       )}
     </div>

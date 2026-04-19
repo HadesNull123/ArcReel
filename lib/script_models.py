@@ -66,6 +66,7 @@ class ImagePrompt(BaseModel):
 
     scene: str = Field(description="Scene description: character position, expression, action, and environmental details")
     composition: Composition = Field(description="Composition info")
+    vfx: str | None = Field(default=None, description="VFX details: describe any visual effects visible in the frame (e.g. magical glowing, fire, lasers). If none, leave empty.")
 
 
 class VideoPrompt(BaseModel):
@@ -75,6 +76,7 @@ class VideoPrompt(BaseModel):
     camera_motion: CameraMotion = Field(description="Camera motion")
     ambiance_audio: str = Field(description="Ambient audio: describe only in-scene sounds, NO BGM")
     dialogue: list[Dialogue] = Field(default_factory=list, description="List of dialogues, fill ONLY if the original text contains quoted dialogues")
+    vfx_motion: str | None = Field(default=None, description="VFX dynamics: describe the dynamic behavior of visual effects (e.g. aura pulsating, explosion expanding). If none, leave empty.")
 
 
 class GeneratedAssets(BaseModel):
