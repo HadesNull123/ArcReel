@@ -1,15 +1,15 @@
 """
-统一的图像生成 Prompt 构建函数
+Unified Image Generation Prompt Builder Functions
 
-所有 Prompt 模板集中在此文件管理，确保 WebUI 和 Skill 使用相同的逻辑。
+All Prompt templates are managed centrally in this file to ensure WebUI and Skills use the same logic.
 
-模块职责:
-- 角色设计图 Prompt 构建
-- 场景设计图 Prompt 构建
-- 道具设计图 Prompt 构建
-- 分镜图 Prompt 后缀
+Module responsibilities:
+- Character design prompt building
+- Scene design prompt building
+- Prop design prompt building
+- Storyboard prompt suffix
 
-使用方:
+Used by:
 - server/routers/generate.py
 - agent_runtime_profile/.claude/skills/generate-assets/
 """
@@ -17,22 +17,22 @@
 
 def build_character_prompt(name: str, description: str, style: str = "", style_description: str = "") -> str:
     """
-    构建角色设计图 Prompt
+    Build character design prompt
 
-    遵循 nano-banana 最佳实践：使用叙事性段落描述，而非关键词列表。
+    Follows nano-banana best practices: uses narrative paragraph descriptions instead of keyword lists.
 
     Args:
-        name: 角色名称
-        description: 角色外貌描述（应为叙事性段落）
-        style: 项目风格
-        style_description: AI 分析的风格描述
+        name: Character name
+        description: Character appearance description (should be a narrative paragraph)
+        style: Project style
+        style_description: AI analyzed style description
 
     Returns:
-        完整的 Prompt 字符串
+        Complete Prompt string
     """
-    style_part = f"，{style}" if style else ""
+    style_part = f", {style}" if style else ""
 
-    # 构建风格前缀
+    # Build style prefix
     style_prefix = ""
     if style_description:
         style_prefix = f"Visual style: {style_description}\n\n"
@@ -51,22 +51,22 @@ Image quality: High definition, clear details, accurate colors."""
 
 def build_prop_prompt(name: str, description: str, style: str = "", style_description: str = "") -> str:
     """
-    构建道具设计图 Prompt
+    Build prop design prompt
 
-    使用三视图构图：正面全视图、45度侧视图、细节特写。
+    Uses three-view composition: full front view, 45-degree side view, detail close-up.
 
     Args:
-        name: 道具名称
-        description: 道具描述
-        style: 项目风格
-        style_description: AI 分析的风格描述
+        name: Prop name
+        description: Prop description
+        style: Project style
+        style_description: AI analyzed style description
 
     Returns:
-        完整的 Prompt 字符串
+        Complete Prompt string
     """
-    style_suffix = f"，{style}" if style else ""
+    style_suffix = f", {style}" if style else ""
 
-    # 构建风格前缀
+    # Build style prefix
     style_prefix = ""
     if style_description:
         style_prefix = f"Visual style: {style_description}\n\n"
@@ -80,22 +80,22 @@ Three views arranged horizontally on a pure light gray background: full front vi
 
 def build_scene_prompt(name: str, description: str, style: str = "", style_description: str = "") -> str:
     """
-    构建场景设计图 Prompt
+    Build scene design prompt
 
-    使用 3/4 主画面 + 右下角细节特写的构图，强调空间结构与氛围。
+    Uses 3/4 main image + bottom right detail close-up composition, emphasizing spatial structure and atmosphere.
 
     Args:
-        name: 场景名称
-        description: 场景描述
-        style: 项目风格
-        style_description: AI 分析的风格描述
+        name: Scene name
+        description: Scene description
+        style: Project style
+        style_description: AI analyzed style description
 
     Returns:
-        完整的 Prompt 字符串
+        Complete Prompt string
     """
-    style_suffix = f"，{style}" if style else ""
+    style_suffix = f", {style}" if style else ""
 
-    # 构建风格前缀
+    # Build style prefix
     style_prefix = ""
     if style_description:
         style_prefix = f"Visual style: {style_description}\n\n"
@@ -109,9 +109,9 @@ The main image occupies three-quarters of the area showing the overall appearanc
 
 def build_storyboard_suffix(content_mode: str = "narration", *, aspect_ratio: str | None = None) -> str:
     """
-    获取分镜图 Prompt 后缀
+    Get storyboard prompt suffix
 
-    优先使用 aspect_ratio 参数；若未传，按 content_mode 推导（向后兼容）。
+    Prefers aspect_ratio parameter; if not passed, infers from content_mode (backward compatibility).
     """
     if aspect_ratio is None:
         ratio = "9:16" if content_mode == "narration" else "16:9"
@@ -126,24 +126,24 @@ def build_storyboard_suffix(content_mode: str = "narration", *, aspect_ratio: st
 
 def build_style_prompt(project_data: dict) -> str:
     """
-    构建风格描述 Prompt 片段
+    Build style description prompt fragment
 
-    合并 style（用户手动填写）和 style_description（AI 分析生成）。
+    Merges style (user manually entered) and style_description (AI analyzed generation).
 
     Args:
-        project_data: project.json 数据
+        project_data: project.json data
 
     Returns:
-        风格描述字符串，用于拼接到生成 Prompt 中
+        Style description string, for appending to the generation Prompt
     """
     parts = []
 
-    # 基础风格标签
+    # Base style tag
     style = project_data.get("style", "")
     if style:
         parts.append(f"Style: {style}")
 
-    # AI 分析的风格描述
+    # AI analyzed style description
     style_description = project_data.get("style_description", "")
     if style_description:
         parts.append(f"Visual style: {style_description}")

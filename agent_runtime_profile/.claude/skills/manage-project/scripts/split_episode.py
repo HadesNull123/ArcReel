@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-split_episode.py - 执行分集切分
+split_episode.py - Execute episode splitting
 
-使用目标字数 + 锚点文本配合定位切分位置，将小说切分为 episode_N.txt 和 _remaining.txt。
-目标字数缩小搜索窗口，锚点文本精确定位。
+Uses target word count + anchor text to locate the split point, splitting the novel into episode_N.txt and _remaining.txt.
+The target word count narrows the search window, and the anchor text precisely locates the point.
 
-用法:
-    # Dry run（仅预览）
-    python split_episode.py --source source/novel.txt --episode 1 --target 1000 --anchor "他转身离开了。" --dry-run
+Usage:
+    # Dry run (preview only)
+    python split_episode.py --source source/novel.txt --episode 1 --target 1000 --anchor "He turned and left." --dry-run
 
-    # 实际执行
-    python split_episode.py --source source/novel.txt --episode 1 --target 1000 --anchor "他转身离开了。"
+    # Actual execution
+    python split_episode.py --source source/novel.txt --episode 1 --target 1000 --anchor "He turned and left."
 """
 
 import argparse
@@ -22,7 +22,7 @@ from _text_utils import find_char_offset
 
 
 def find_anchor_near_target(text: str, anchor: str, target_offset: int, window: int = 500) -> list[int]:
-    """在目标偏移附近的窗口内查找锚点文本，返回匹配末尾偏移列表（按距离排序）。"""
+    """Find anchor text within the window near the target offset, returning a list of matched end offsets (sorted by distance)."""
     search_start = max(0, target_offset - window)
     search_end = min(len(text), target_offset + window)
     search_region = text[search_start:search_end]
@@ -43,21 +43,21 @@ def find_anchor_near_target(text: str, anchor: str, target_offset: int, window: 
 
 
 def main():
-    parser = argparse.ArgumentParser(description="执行分集切分")
-    parser.add_argument("--source", required=True, help="源文件路径")
-    parser.add_argument("--episode", required=True, type=int, help="集数编号")
-    parser.add_argument("--target", required=True, type=int, help="目标字数（与 peek 的 --target 一致）")
-    parser.add_argument("--anchor", required=True, help="切分点前的文本片段（10-20 字符）")
-    parser.add_argument("--context", default=500, type=int, help="搜索窗口大小（默认 500 字符）")
-    parser.add_argument("--dry-run", action="store_true", help="仅展示切分预览，不写文件")
+    parser = argparse.ArgumentParser(description="Execute episode splitting")
+    parser.add_argument("--source", required=True, help="Source file path")
+    parser.add_argument("--episode", required=True, type=int, help="Episode number")
+    parser.add_argument("--target", required=True, type=int, help="Target word count (must match the --target of peek)")
+    parser.add_argument("--anchor", required=True, help="Text fragment before the split point (10-20 characters)")
+    parser.add_argument("--context", default=500, type=int, help="Search window size (default 500 characters)")
+    parser.add_argument("--dry-run", action="store_true", help="Only show split preview, do not write file")
     args = parser.parse_args()
 
     source_path = Path(args.source).resolve()
     if not source_path.is_relative_to(Path.cwd().resolve()):
-        print(f"错误：源文件路径超出当前项目目录: {source_path}", file=sys.stderr)
+        print(f"Error: Source file path is outside the current project directory: {source_path}", file=sys.stderr)
         sys.exit(1)
     if not source_path.exists():
-        print(f"错误：源文件does not exist: {source_path}", file=sys.stderr)
+        print(f"Error: Source file does not exist: {source_path}", file=sys.stderr)
         sys.exit(1)
 
     text = source_path.read_text(encoding="utf-8")
@@ -70,44 +70,42 @@ def main():
 
     if len(positions) == 0:
         print(
-            f'错误：在目标字数 {args.target} 附近（±{args.context} 字符窗口）未找到锚点文本: "{args.anchor}"',
+            f'Error: Could not find anchor text "{args.anchor}" near target word count {args.target} (±{args.context} char window)',
             file=sys.stderr,
         )
         sys.exit(1)
 
     if len(positions) > 1:
         print(
-            f"警告：锚点文本在窗口内匹配到 {len(positions)} 处，使用距离目标最近的匹配。",
+            f"Warning: Anchor text matched {len(positions)} places within the window. Using the closest match to the target.",
             file=sys.stderr,
         )
         for i, pos in enumerate(positions):
             ctx_start = max(0, pos - len(args.anchor) - 10)
             ctx_end = min(len(text), pos + 10)
             distance = abs(pos - target_offset)
-            marker = " ← 选中" if i == 0 else ""
-            print(f"  匹配 {i + 1} (距离 {distance}): ...{text[ctx_start:ctx_end]}...{marker}", file=sys.stderr)
+            marker = " ← Selected" if i == 0 else ""
+            print(f"  Match {i + 1} (Distance {distance}): ...{text[ctx_start:ctx_end]}...{marker}", file=sys.stderr)
 
     split_pos = positions[0]
     part_before = text[:split_pos]
     part_after = text[split_pos:]
 
-    # 展示切分预览
     preview_len = 50
     before_preview = part_before[-preview_len:] if len(part_before) > preview_len else part_before
     after_preview = part_after[:preview_len] if len(part_after) > preview_len else part_after
 
-    print(f"目标字数: {args.target}，目标偏移: {target_offset}")
-    print(f"切分位置: 第 {split_pos} 字符处")
-    print(f"前文末尾: ...{before_preview}")
-    print(f"后文开头: {after_preview}...")
-    print(f"前半部分: {len(part_before)} 字符")
-    print(f"后半部分: {len(part_after)} 字符")
+    print(f"Target Word Count: {args.target}, Target Offset: {target_offset}")
+    print(f"Split Position: at character {split_pos}")
+    print(f"End of First Part: ...{before_preview}")
+    print(f"Start of Second Part: {after_preview}...")
+    print(f"First Part Length: {len(part_before)} characters")
+    print(f"Second Part Length: {len(part_after)} characters")
 
     if args.dry_run:
-        print("\n[Dry Run] 未写入文件。确认无误后去掉 --dry-run 参数执行。")
+        print("\n[Dry Run] No files were written. Remove --dry-run to execute if correct.")
         return
 
-    # 实际写入文件
     output_dir = source_path.parent
     episode_file = output_dir / f"episode_{args.episode}.txt"
     remaining_file = output_dir / "_remaining.txt"
@@ -115,10 +113,10 @@ def main():
     episode_file.write_text(part_before, encoding="utf-8")
     remaining_file.write_text(part_after, encoding="utf-8")
 
-    print("\n已生成:")
-    print(f"  {episode_file} ({len(part_before)} 字符)")
-    print(f"  {remaining_file} ({len(part_after)} 字符)")
-    print(f"  原文件未修改: {source_path}")
+    print("\nGenerated:")
+    print(f"  {episode_file} ({len(part_before)} characters)")
+    print(f"  {remaining_file} ({len(part_after)} characters)")
+    print(f"  Original file unmodified: {source_path}")
 
 
 if __name__ == "__main__":

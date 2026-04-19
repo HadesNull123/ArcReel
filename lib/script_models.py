@@ -41,6 +41,8 @@ TransitionType = Literal[
     "cut",
     "fade",
     "dissolve",
+    "wipe",
+    "match_cut",
 ]
 
 

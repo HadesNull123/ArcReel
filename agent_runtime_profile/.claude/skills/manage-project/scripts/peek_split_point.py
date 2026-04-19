@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-peek_split_point.py - 切分点探测脚本
+peek_split_point.py - Split point detection script
 
-展示目标字数附近的上下文，帮助 agent 和用户决定自然断点。
+Displays context around the target word count to help the agent and user determine a natural breakpoint.
 
-用法:
+Usage:
     python peek_split_point.py --source source/novel.txt --target 1000
     python peek_split_point.py --source source/novel.txt --target 1000 --context 300
 """
@@ -20,25 +20,25 @@ from _text_utils import count_chars, find_char_offset, find_natural_breakpoints
 
 
 def main():
-    parser = argparse.ArgumentParser(description="探测切分点附近上下文")
-    parser.add_argument("--source", required=True, help="源文件路径")
-    parser.add_argument("--target", required=True, type=int, help="目标字数（有效字数）")
-    parser.add_argument("--context", default=200, type=int, help="上下文字数（默认 200）")
+    parser = argparse.ArgumentParser(description="Detect context near the split point")
+    parser.add_argument("--source", required=True, help="Source file path")
+    parser.add_argument("--target", required=True, type=int, help="Target word count (valid characters)")
+    parser.add_argument("--context", default=200, type=int, help="Context word count (default 200)")
     args = parser.parse_args()
 
     source_path = Path(args.source).resolve()
     if not source_path.is_relative_to(Path.cwd().resolve()):
-        print(f"错误：源文件路径超出当前项目目录: {source_path}", file=sys.stderr)
+        print(f"Error: Source file path is outside the current project directory: {source_path}", file=sys.stderr)
         sys.exit(1)
     if not source_path.exists():
-        print(f"错误：源文件does not exist: {source_path}", file=sys.stderr)
+        print(f"Error: Source file does not exist: {source_path}", file=sys.stderr)
         sys.exit(1)
 
     text = source_path.read_text(encoding="utf-8")
     total_chars = count_chars(text)
 
     if args.target >= total_chars:
-        print(f"错误：目标字数 ({args.target}) 超过或等于总有效字数 ({total_chars})", file=sys.stderr)
+        print(f"Error: Target word count ({args.target}) is greater than or equal to total valid characters ({total_chars})", file=sys.stderr)
         sys.exit(1)
 
     # 定位目标字数对应的原文偏移
