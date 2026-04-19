@@ -373,17 +373,17 @@ class SessionManager:
         self._load_config()
 
     _PERSONA_PROMPT = """\
-## 身份
+## Identity
 
-你是 ArcReel 智能体，一个专业的 AI 视频内容创作助手。你的职责是将小说转化为可发布的短视频内容。
+You are the ArcReel Agent, a professional AI video content creation assistant. Your role is to convert novels into publishable short video content.
 
-## 行为准则
+## Code of Conduct
 
-- 主动引导用户完成视频创作工作流，而不仅仅被动回答问题
-- 遇到不确定的创作决策时，向用户提出选项并给出建议，而不是自行决定
-- 涉及多步骤任务时，使用 TodoWrite 跟踪进度并向用户汇报
-- 你不能创建或编辑代码文件（.py/.js/.sh 等），Write/Edit 仅限 .json/.md/.txt
-- 你是用户的视频制作搭档，专业、友善、高效"""
+- Proactively guide the user through the video creation workflow, rather than just passively answering questions.
+- When facing uncertain creative decisions, present options to the user and give recommendations, rather than deciding on your own.
+- When handling multi-step tasks, use TodoWrite to track progress and report back to the user.
+- You must not create or edit code files (.py/.js/.sh, etc.). Write/Edit is strictly limited to .json/.md/.txt.
+- You are the user's video production partner: professional, friendly, and efficient."""
 
     def _build_append_prompt(self, project_name: str, locale: str = "zh") -> str:
         """Build the append portion for SystemPromptPreset.
@@ -395,13 +395,13 @@ class SessionManager:
         """
         parts = [self._PERSONA_PROMPT]
 
-        lang = LOCALE_LANGUAGE_MAP.get(locale, "中文")
+        lang = LOCALE_LANGUAGE_MAP.get(locale, "English")
         parts.append(
-            f"\n## 语言规范\n\n"
-            f"- **回答用户必须使用{lang}**：所有回复、思考过程、任务清单及计划文件，均须使用{lang}\n"
-            f"- **视频内容语言**：所有生成的视频对话、旁白、字幕均使用{lang}\n"
-            f"- **文档使用{lang}**：所有的 Markdown 文件均使用{lang}编写\n"
-            f"- **Prompt 使用{lang}**：图片生成/视频生成使用的 prompt 应使用{lang}编写"
+            f"\n## Language Specifications\n\n"
+            f"- **Must respond to user in {lang}**: All replies, thought processes, task lists, and plan files MUST be in {lang}\n"
+            f"- **Video Content Language**: All generated video dialogues, narrations, and subtitles MUST be in {lang}\n"
+            f"- **Document Language**: All Markdown files MUST be written in {lang}\n"
+            f"- **Prompt Language**: Prompts used for image/video generation MUST be written in {lang}"
         )
 
         project_context = self._build_project_context(project_name)
@@ -432,30 +432,30 @@ class SessionManager:
             return ""
 
         parts = [
-            "## 当前项目上下文",
+            "## Current Project Context",
             "",
         ]
 
         # TODO: 当前定位是自部署服务，这里直接拼接项目元数据以保持实现简单。
         # TODO: 若后续演进为 SaaS / 多租户服务，需要把 title/style/overview 等用户输入
         # TODO: 按“非指令上下文”做边界化或转义，降低 prompt injection 风险。
-        parts.append(f"- 项目标识：{project_name}")
+        parts.append(f"- Project ID: {project_name}")
         if title := config.get("title"):
-            parts.append(f"- 项目标题：{title}")
+            parts.append(f"- Project Title: {title}")
         if mode := config.get("content_mode"):
-            parts.append(f"- 内容模式：{mode}")
+            parts.append(f"- Content Mode: {mode}")
         if style := config.get("style"):
-            parts.append(f"- 视觉风格：{style}")
+            parts.append(f"- Visual Style: {style}")
         if style_desc := config.get("style_description"):
-            parts.append(f"- 风格描述：{style_desc}")
-        parts.append(f"- 项目目录（即当前工作目录 cwd）：{project_cwd}")
+            parts.append(f"- Style Description: {style_desc}")
+        parts.append(f"- Project Directory (Current Working Directory cwd): {project_cwd}")
         parts.append(
-            "- Read/Edit/Write 等工具的 file_path 参数必须使用绝对路径，不要使用相对路径，也不要把项目标题当成目录名。"
+            "- The file_path parameter for tools like Read/Edit/Write must use absolute paths. Do not use relative paths, and do not use the project title as a directory name."
         )
         parts.append(
-            "- Bash 调用 skill 脚本时必须使用相对路径（如 `python .claude/skills/.../script.py`），不要转换为绝对路径。"
+            "- When using Bash to call skill scripts, you must use relative paths (e.g., `python .claude/skills/.../script.py`). Do not convert to absolute paths."
         )
-        parts.append("- Bash 命令必须写在单行，禁止使用 `\\` 换行，JSON 参数使用紧凑格式。")
+        parts.append("- Bash commands must be written on a single line. The use of `\\` for line breaks is forbidden. Use compact formatting for JSON parameters.")
 
         self._append_overview_section(parts, config.get("overview", {}))
 
@@ -467,15 +467,15 @@ class SessionManager:
         if not isinstance(overview, dict) or not overview:
             return
         parts.append("")
-        parts.append("### 项目概述")
+        parts.append("### Project Overview")
         if synopsis := overview.get("synopsis"):
             parts.append(synopsis)
         if genre := overview.get("genre"):
-            parts.append(f"- 题材：{genre}")
+            parts.append(f"- Genre: {genre}")
         if theme := overview.get("theme"):
-            parts.append(f"- 主题：{theme}")
+            parts.append(f"- Theme: {theme}")
         if world := overview.get("world_setting"):
-            parts.append(f"- 世界观：{world}")
+            parts.append(f"- World Setting: {world}")
 
     def _build_options(
         self,

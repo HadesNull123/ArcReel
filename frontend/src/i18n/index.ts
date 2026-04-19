@@ -42,7 +42,7 @@ voidCall(i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: 'zh',
+    fallbackLng: 'en',
     debug: false,
     interpolation: {
       escapeValue: false,

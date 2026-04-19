@@ -6,6 +6,7 @@ export interface WizardStep1Value {
   contentMode: "narration" | "drama";
   aspectRatio: "9:16" | "16:9";
   generationMode: "single" | "grid";
+  targetLanguage: string;
 }
 
 export interface WizardStep1BasicsProps {
@@ -162,6 +163,26 @@ export function WizardStep1Basics({
             {t("dashboard:grid_generation")}
           </label>
         </div>
+      </div>
+
+      {/* Target Language */}
+      <div>
+        <label className="block text-sm font-medium text-gray-400 mb-1">
+          {t("dashboard:target_language", "Target Language")}
+        </label>
+        <select
+          value={value.targetLanguage}
+          onChange={(e) => onChange({ ...value, targetLanguage: e.target.value })}
+          className="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-200 outline-none focus:border-indigo-500"
+        >
+          <option value="English">English</option>
+          <option value="Vietnamese">Tiếng Việt (Vietnamese)</option>
+          <option value="Chinese">中文 (Chinese)</option>
+          <option value="Auto">Auto (Follow Novel/Script)</option>
+        </select>
+        <p className="mt-1 text-xs text-gray-600">
+          {t("dashboard:target_language_desc", "Language used by AI to write prompts and descriptions.")}
+        </p>
       </div>
 
       {/* Footer */}

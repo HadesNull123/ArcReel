@@ -67,6 +67,7 @@ class CreateProjectRequest(BaseModel):
     aspect_ratio: str | None = "9:16"
     default_duration: int | None = None
     generation_mode: str | None = None
+    target_language: str | None = "English"
     # ===== 新增 =====
     style_template_id: str | None = None
     video_backend: str | None = None
@@ -429,6 +430,7 @@ async def create_project(
                     "text_backend_script",
                     "text_backend_overview",
                     "text_backend_style",
+                    "target_language",
                 )
                 if (value := getattr(req, field))
             }

@@ -22,7 +22,7 @@ from .zh import templates as zh_templates
 logger = logging.getLogger(__name__)
 
 # Default locale
-DEFAULT_LOCALE = "zh"
+DEFAULT_LOCALE = "en"
 SUPPORTED_LOCALES = ["zh", "en"]
 
 # Mapping from locale code to human-readable language name

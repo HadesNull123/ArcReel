@@ -99,6 +99,7 @@ class ScriptGenerator:
                 supported_durations=self._resolve_supported_durations(),
                 default_duration=self.project_json.get("default_duration"),
                 aspect_ratio=self._resolve_aspect_ratio(),
+                target_language=self.project_json.get("target_language", "English"),
             )
             schema = NarrationEpisodeScript
         else:
@@ -113,6 +114,7 @@ class ScriptGenerator:
                 supported_durations=self._resolve_supported_durations(),
                 default_duration=self.project_json.get("default_duration"),
                 aspect_ratio=self._resolve_aspect_ratio(),
+                target_language=self.project_json.get("target_language", "English"),
             )
             schema = DramaEpisodeScript
 
@@ -173,6 +175,7 @@ class ScriptGenerator:
                 supported_durations=self._resolve_supported_durations(),
                 default_duration=self.project_json.get("default_duration"),
                 aspect_ratio=self._resolve_aspect_ratio(),
+                target_language=self.project_json.get("target_language", "English"),
             )
         else:
             return build_drama_prompt(
@@ -186,6 +189,7 @@ class ScriptGenerator:
                 supported_durations=self._resolve_supported_durations(),
                 default_duration=self.project_json.get("default_duration"),
                 aspect_ratio=self._resolve_aspect_ratio(),
+                target_language=self.project_json.get("target_language", "English"),
             )
 
     def _resolve_supported_durations(self) -> list[int] | None:

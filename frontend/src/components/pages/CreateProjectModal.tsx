@@ -82,6 +82,7 @@ export function CreateProjectModal() {
     contentMode: "narration",
     aspectRatio: "9:16",
     generationMode: "single",
+    targetLanguage: "English",
   });
 
   const [models, setModels] = useState<ModelConfigValue>({
@@ -182,6 +183,7 @@ export function CreateProjectModal() {
         content_mode: basics.contentMode,
         aspect_ratio: basics.aspectRatio,
         generation_mode: basics.generationMode,
+        target_language: basics.targetLanguage,
         default_duration: models.defaultDuration,
         style_template_id: style.mode === "template" ? style.templateId : null,
         video_backend: models.videoBackend || null,

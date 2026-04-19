@@ -26,13 +26,15 @@ ShotType = Literal[
 
 CameraMotion = Literal[
     "Static",
-    "Pan Left",
-    "Pan Right",
-    "Tilt Up",
-    "Tilt Down",
-    "Zoom In",
-    "Zoom Out",
-    "Tracking Shot",
+    "Dolly In",
+    "Dolly Out",
+    "Pan",
+    "Tracking",
+    "Boom/Crane",
+    "Orbit",
+    "Snap Zoom",
+    "Handheld Shake",
+    "Steadicam",
 ]
 
 TransitionType = Literal[

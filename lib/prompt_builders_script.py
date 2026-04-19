@@ -1,14 +1,14 @@
 """
-prompt_builders_script.py - 剧本生成 Prompt 构建器
+prompt_builders_script.py - Script Generation Prompt Builders
 
-1. XML 标签分隔上下文
-2. 明确的字段描述和约束
-3. 可选值列表约束输出
+1. Use XML tags to separate context
+2. Clear field descriptions and constraints
+3. Restrict outputs using optional value lists
 """
 
 
 def _format_character_names(characters: dict) -> str:
-    """格式化角色列表"""
+    """Format character list"""
     lines = []
     for name in characters.keys():
         lines.append(f"- {name}")
@@ -16,7 +16,7 @@ def _format_character_names(characters: dict) -> str:
 
 
 def _format_asset_names(assets: dict) -> str:
-    """格式化场景或道具列表"""
+    """Format scene or prop list"""
     lines = []
     for name in assets.keys():
         lines.append(f"- {name}")
@@ -24,20 +24,20 @@ def _format_asset_names(assets: dict) -> str:
 
 
 def _format_duration_constraint(supported_durations: list[int], default_duration: int | None) -> str:
-    """根据参数生成时长约束描述。"""
+    """Generate duration constraint description based on parameters."""
     durations_str = ", ".join(str(d) for d in supported_durations)
     if default_duration is not None:
-        return f"时长：从 [{durations_str}] 秒中选择，默认使用 {default_duration} 秒"
-    return f"时长：从 [{durations_str}] 秒中选择，根据内容节奏自行决定"
+        return f"Duration: Choose from [{durations_str}] seconds, default is {default_duration} seconds"
+    return f"Duration: Choose from [{durations_str}] seconds, decide based on content pacing"
 
 
 def _format_aspect_ratio_desc(aspect_ratio: str) -> str:
-    """根据宽高比返回构图描述。"""
+    """Return composition description based on aspect ratio."""
     if aspect_ratio == "9:16":
-        return "竖屏构图"
+        return "Portrait composition"
     elif aspect_ratio == "16:9":
-        return "横屏构图"
-    return f"{aspect_ratio} 构图"
+        return "Landscape composition"
+    return f"{aspect_ratio} composition"
 
 
 def build_narration_prompt(
@@ -51,49 +51,49 @@ def build_narration_prompt(
     supported_durations: list[int] | None = None,
     default_duration: int | None = None,
     aspect_ratio: str = "9:16",
-    target_language: str = "中文",
+    target_language: str = "English",
 ) -> str:
     """
-    构建说书模式的 Prompt
+    Build Narration Mode Prompt
 
     Args:
-        project_overview: 项目概述（synopsis, genre, theme, world_setting）
-        style: 视觉风格标签
-        style_description: 风格描述
-        characters: 角色字典（仅用于提取名称列表）
-        scenes: 场景字典（仅用于提取名称列表）
-        props: 道具字典（仅用于提取名称列表）
-        segments_md: Step 1 的 Markdown 内容
-        target_language: 输出的目标语言
+        project_overview: Project overview (synopsis, genre, theme, world_setting)
+        style: Visual style tags
+        style_description: Style description
+        characters: Character dictionary (used to extract name list)
+        scenes: Scene dictionary (used to extract name list)
+        props: Prop dictionary (used to extract name list)
+        segments_md: Step 1 Markdown content
+        target_language: Target language for output
 
     Returns:
-        构建好的 Prompt 字符串
+        Constructed Prompt string
     """
     character_names = list(characters.keys())
     scene_names = list(scenes.keys())
     prop_names = list(props.keys())
 
-    prompt = f"""你的任务是为短视频生成分镜剧本。请仔细遵循以下指示：
+    prompt = f"""Your task is to generate a storyboard script for a short video. Please carefully follow these instructions:
 
-**重要：所有输出内容必须使用{target_language}。仅 JSON 键名和枚举值使用英文。**
+**IMPORTANT: All output content MUST use {target_language}. Only JSON keys and enum values use English.**
 
-1. 你将获得故事概述、视觉风格、角色列表、场景列表、道具列表，以及已拆分的小说片段。
+1. You will be provided with a story overview, visual style, character list, scene list, prop list, and split novel segments.
 
-2. 为每个片段生成：
-   - image_prompt：第一帧的图像生成提示词（{target_language}描述）
-   - video_prompt：动作和音效的视频生成提示词（{target_language}描述）
+2. For each segment, generate:
+   - image_prompt: Image generation prompt for the first frame (in {target_language})
+   - video_prompt: Video generation prompt for actions and sound effects (in {target_language})
 
 <overview>
 {project_overview.get("synopsis", "")}
 
-题材类型：{project_overview.get("genre", "")}
-核心主题：{project_overview.get("theme", "")}
-世界观设定：{project_overview.get("world_setting", "")}
+Genre: {project_overview.get("genre", "")}
+Core Theme: {project_overview.get("theme", "")}
+World Setting: {project_overview.get("world_setting", "")}
 </overview>
 
 <style>
-风格：{style}
-描述：{style_description}
+Style: {style}
+Description: {style_description}
 </style>
 
 <characters>
@@ -112,57 +112,67 @@ def build_narration_prompt(
 {segments_md}
 </segments>
 
-segments 为片段拆分表，每行是一个片段，包含：
-- 片段 ID：格式为 E{{集数}}S{{序号}}
-- 小说原文：必须原样保留到 novel_text 字段
+'segments' is the split segment table. Each line is a segment containing:
+- Segment ID: Format is E{{Episode}}S{{Sequence}}
+- Original Text: Must be preserved exactly as is in the novel_text field
 - {_format_duration_constraint(supported_durations or [4, 6, 8], default_duration)}
-- 是否有对话：用于判断是否需要填写 video_prompt.dialogue
-- 是否为 segment_break：场景切换点，需设置 segment_break 为 true
+- Has Dialogue: Used to determine if video_prompt.dialogue needs to be filled
+- Is segment_break: Scene transition point, requires segment_break to be true
 
-3. 为每个片段生成时，遵循以下规则：
+3. When generating for each segment, follow these 【Cinematic Storyboarding & Camera Rules】:
+   - 【180-Degree Rule】: The left/right positioning of characters in dialogue scenes must remain consistent. Do not cross the axis (jump the line) in continuous shots. Reverse shots must be taken over-the-shoulder.
+   - 【Psychological Perspective Rule】: When showing a dominant/oppressive/majestic character, use Low Angle; when showing a weak/fearful/small character, use High Angle; use Eye-level for equal dialogue.
+   - 【Camera Filming Scope Logic】: Only describe visual elements that the camera can actually see. For Close-ups or single reverse shots, NEVER describe other characters not in the frame in the 'scene' or 'action' fields, to avoid video model hallucinations.
 
-a. **novel_text**：原样复制小说原文，不做任何修改。
+a. **novel_text**: Copy the original novel text exactly, without any modifications.
 
-b. **characters_in_segment**：列出本片段中出场的角色名称。
-   - 可选值：[{", ".join(character_names)}]
-   - 仅包含明确提及或明显暗示的角色
+b. **characters_in_segment**: List the names of the characters appearing in this segment.
+   - Optional values: [{", ".join(character_names)}]
+   - Only include characters explicitly mentioned or clearly implied
 
-c. **scenes**：列出本片段中涉及的场景名称（空间位置）。
-   - 可选值：[{", ".join(scene_names)}]
-   - 仅包含明确提及或明显暗示的场景
+c. **scenes**: List the names of the scenes (spatial locations) involved in this segment.
+   - Optional values: [{", ".join(scene_names)}]
+   - Only include scenes explicitly mentioned or clearly implied
 
-d. **props**：列出本片段中涉及的道具名称（物品）。
-   - 可选值：[{", ".join(prop_names)}]
-   - 仅包含明确提及或明显暗示的道具
+d. **props**: List the names of the props (objects) involved in this segment.
+   - Optional values: [{", ".join(prop_names)}]
+   - Only include props explicitly mentioned or clearly implied
 
-e. **image_prompt**：生成包含以下字段的对象：
-   - scene：用中文描述此刻画面中的具体场景——角色位置、姿态、表情、服装细节，以及可见的环境元素和物品。
-     聚焦当下瞬间的可见画面。仅描述摄像机能够捕捉到的具体视觉元素。
-     确保描述避免超出此刻画面的元素。排除比喻、隐喻、抽象情绪词、主观评价、多场景切换等无法直接渲染的描述。
-     画面应自包含，不暗示过去事件或未来发展。
-   - composition：
-     - shot_type：镜头类型（Extreme Close-up, Close-up, Medium Close-up, Medium Shot, Medium Long Shot, Long Shot, Extreme Long Shot, Over-the-shoulder, Point-of-view）
-     - lighting：用中文描述具体的光源类型、方向和色温（如"左侧窗户透入的暖黄色晨光"）
-     - ambiance：用中文描述可见的环境效果（如"薄雾弥漫"、"尘埃飞扬"），避免抽象情绪词
+e. **image_prompt**: Generate an object containing the following fields:
+   - scene: Describe in {target_language} the specific scene in the current frame—character positions, postures, expressions, clothing details, and visible environmental elements and objects.
+     Focus on the visible picture at the current moment. Only describe specific visual elements that the camera can capture.
+     Ensure the description avoids elements outside the current frame. Exclude metaphors, abstract emotional words, subjective evaluations, multi-scene transitions, and other descriptions that cannot be directly rendered.
+     The picture should be self-contained, without implying past events or future developments.
+   - composition:
+     - shot_type: Shot type (Extreme Close-up, Close-up, Medium Close-up, Medium Shot, Medium Long Shot, Long Shot, Extreme Long Shot, Over-the-shoulder, Point-of-view)
+     - lighting: Describe the specific light source type, direction, and color temperature in {target_language} (e.g., "warm yellow morning light coming through the left window")
+     - ambiance: Describe visible environmental effects in {target_language} (e.g., "misty", "dust flying"), avoid abstract emotional words
 
-f. **video_prompt**：生成包含以下字段的对象：
-   - action：用中文精确描述该时长内主体的具体动作——身体移动、手势变化、表情转换。
-     聚焦单一连贯动作，确保在指定时长内可完成。
-     排除多场景切换、蒙太奇、快速剪辑等单次生成无法实现的效果。
-     排除比喻性动作描述（如"像蝴蝶般飞舞"）。
-   - camera_motion：镜头运动（Static, Pan Left, Pan Right, Tilt Up, Tilt Down, Zoom In, Zoom Out, Tracking Shot）
-     每个片段仅选择一种镜头运动。
-   - ambiance_audio：用中文描述画内音（diegetic sound）——环境声、脚步声、物体声音。
-     仅描述场景内真实存在的声音。排除音乐、BGM、旁白、画外音。
-   - dialogue：{{speaker, line}} 数组。仅当原文有引号对话时填写。speaker 必须来自 characters_in_segment。
+f. **video_prompt**: Generate an object containing the following fields:
+   - action: Precisely describe in {target_language} the specific actions of the subject during this duration (head, hands, body movements) and micro-expressions.
+     Note: Try to use 【Age+Gender】 (e.g., "young woman", "middle-aged man") to refer to the subject character to improve the video model's understanding.
+     【Dynamics First Principle】: Purely static descriptions are forbidden! The video cannot be stiff.
+     - Micro-expression library (for precise facial generation): tightly furrowed brows, reddened eyes, dilated pupils, raised eyebrows, one corner of mouth raised, tightly pursed lips, dodging gaze, etc. Do not use vague terms (like "serious expression").
+     - Character action library: Even in dialogue scenes, micro-actions must be added (nodding, turning head, tapping desk, walking, leaning closer).
+     Focus on a single continuous action, ensuring it can be completed within the specified duration. Exclude multi-scene transitions or metaphorical descriptions.
+   - camera_motion: Camera movement (Static, Dolly In, Dolly Out, Pan, Tracking, Boom/Crane, Orbit, Snap Zoom, Handheld Shake, Steadicam)
+     【Camera Move Selection Rules】:
+     - Character moving = MUST use Tracking or Pan, Static is forbidden.
+     - Observing environment = Use Pan to simulate gaze.
+     - Emotional climax = Dolly In, Orbit, or Snap Zoom (only once).
+     - Close-up shots = MUST and CAN ONLY use Static, as movement exposes other parts.
+     - Consecutive segments cannot always use the same camera move (especially consecutive Dolly Ins).
+   - ambiance_audio: Describe in {target_language} the diegetic sound—ambient sounds, footsteps, object sounds.
+     Only describe sounds that genuinely exist within the scene. Exclude music, BGM, narration, voiceovers.
+   - dialogue: Array of {{speaker, line}}. Fill in only when there is quoted dialogue in the original text. speaker must come from characters_in_segment.
 
-g. **segment_break**：如果在片段表中标记为"是"，则设为 true。
+g. **segment_break**: Set to true if marked as "Yes" in the segment table.
 
-h. **duration_seconds**：使用片段表中的时长。
+h. **duration_seconds**: Use the duration from the segment table.
 
-i. **transition_to_next**：默认为 "cut"。
+i. **transition_to_next**: Default is "cut".
 
-目标：创建生动、视觉一致的分镜提示词，用于指导 AI 图像和视频生成。保持创意、具体，并忠于原文。
+Goal: Create vivid, visually consistent storyboard prompts for AI image and video generation. Keep it creative, specific, and faithful to the original text.
 """
     return prompt
 
@@ -178,49 +188,49 @@ def build_drama_prompt(
     supported_durations: list[int] | None = None,
     default_duration: int | None = None,
     aspect_ratio: str = "16:9",
-    target_language: str = "中文",
+    target_language: str = "English",
 ) -> str:
     """
-    构建剧集动画模式的 Prompt
+    Build Drama Animation Mode Prompt
 
     Args:
-        project_overview: 项目概述
-        style: 视觉风格标签
-        style_description: 风格描述
-        characters: 角色字典
-        scenes: 场景字典（project 级场景资源列表）
-        props: 道具字典
-        scenes_md: Step 1 的 Markdown 分镜拆分内容
-        target_language: 输出的目标语言
+        project_overview: Project overview
+        style: Visual style tags
+        style_description: Style description
+        characters: Character dictionary
+        scenes: Scene dictionary (project-level scene assets)
+        props: Prop dictionary
+        scenes_md: Step 1 Markdown storyboard split content
+        target_language: Target language for output
 
     Returns:
-        构建好的 Prompt 字符串
+        Constructed Prompt string
     """
     character_names = list(characters.keys())
     scene_names = list(scenes.keys())
     prop_names = list(props.keys())
 
-    prompt = f"""你的任务是为剧集动画生成分镜剧本。请仔细遵循以下指示：
+    prompt = f"""Your task is to generate a storyboard script for a drama animation. Please carefully follow these instructions:
 
-**重要：所有输出内容必须使用{target_language}。仅 JSON 键名和枚举值使用英文。**
+**IMPORTANT: All output content MUST use {target_language}. Only JSON keys and enum values use English.**
 
-1. 你将获得故事概述、视觉风格、角色列表、场景列表、道具列表，以及已拆分的分镜列表。
+1. You will be provided with a story overview, visual style, character list, scene list, prop list, and split storyboard shots.
 
-2. 为每个分镜生成：
-   - image_prompt：第一帧的图像生成提示词（{target_language}描述）
-   - video_prompt：动作和音效的视频生成提示词（{target_language}描述）
+2. For each shot, generate:
+   - image_prompt: Image generation prompt for the first frame (in {target_language})
+   - video_prompt: Video generation prompt for actions and sound effects (in {target_language})
 
 <overview>
 {project_overview.get("synopsis", "")}
 
-题材类型：{project_overview.get("genre", "")}
-核心主题：{project_overview.get("theme", "")}
-世界观设定：{project_overview.get("world_setting", "")}
+Genre: {project_overview.get("genre", "")}
+Core Theme: {project_overview.get("theme", "")}
+World Setting: {project_overview.get("world_setting", "")}
 </overview>
 
 <style>
-风格：{style}
-描述：{style_description}
+Style: {style}
+Description: {style_description}
 </style>
 
 <characters>
@@ -239,56 +249,66 @@ def build_drama_prompt(
 {scenes_md}
 </shots>
 
-shots 为分镜拆分表，每行是一个分镜，包含：
-- 分镜 ID：格式为 E{{集数}}S{{序号}}
-- 分镜描述：剧本改编后的分镜内容
+'shots' is the storyboard split table. Each line is a shot containing:
+- Shot ID: Format is E{{Episode}}S{{Sequence}}
+- Shot Description: Adapted storyboard content from script
 - {_format_duration_constraint(supported_durations or [4, 6, 8], default_duration)}
-- 场景类型：剧情、动作、对话等
-- 是否为 segment_break：场景切换点，需设置 segment_break 为 true
+- Scene Type: Plot, Action, Dialogue, etc.
+- Is segment_break: Scene transition point, requires segment_break to be true
 
-3. 为每个分镜生成时，遵循以下规则：
+3. When generating for each shot, follow these 【Cinematic Storyboarding & Camera Rules】:
+   - 【180-Degree Rule】: The left/right positioning of characters in dialogue scenes must remain consistent. Do not cross the axis (jump the line) in continuous shots. Reverse shots must be taken over-the-shoulder.
+   - 【Psychological Perspective Rule】: When showing a dominant/oppressive/majestic character, use Low Angle; when showing a weak/fearful/small character, use High Angle; use Eye-level for equal dialogue.
+   - 【Camera Filming Scope Logic】: Only describe visual elements that the camera can actually see. For Close-ups or single reverse shots, NEVER describe other characters not in the frame in the 'scene' or 'action' fields, to avoid video model hallucinations.
 
-a. **characters_in_scene**：列出本分镜中出场的角色名称。
-   - 可选值：[{", ".join(character_names)}]
-   - 仅包含明确提及或明显暗示的角色
+a. **characters_in_scene**: List the names of the characters appearing in this shot.
+   - Optional values: [{", ".join(character_names)}]
+   - Only include characters explicitly mentioned or clearly implied
 
-b. **scenes**：列出本分镜所处的场景名称（空间位置）。
-   - 可选值：[{", ".join(scene_names)}]
-   - 仅包含明确提及或明显暗示的场景
+b. **scenes**: List the names of the scenes (spatial locations) where this shot takes place.
+   - Optional values: [{", ".join(scene_names)}]
+   - Only include scenes explicitly mentioned or clearly implied
 
-c. **props**：列出本分镜中涉及的道具名称（物品）。
-   - 可选值：[{", ".join(prop_names)}]
-   - 仅包含明确提及或明显暗示的道具
+c. **props**: List the names of the props (objects) involved in this shot.
+   - Optional values: [{", ".join(prop_names)}]
+   - Only include props explicitly mentioned or clearly implied
 
-d. **image_prompt**：生成包含以下字段的对象：
-   - scene：用中文描述此刻画面中的具体场景——角色位置、姿态、表情、服装细节，以及可见的环境元素和物品。{_format_aspect_ratio_desc(aspect_ratio)}。
-     聚焦当下瞬间的可见画面。仅描述摄像机能够捕捉到的具体视觉元素。
-     确保描述避免超出此刻画面的元素。排除比喻、隐喻、抽象情绪词、主观评价、多场景切换等无法直接渲染的描述。
-     画面应自包含，不暗示过去事件或未来发展。
-   - composition：
-     - shot_type：镜头类型（Extreme Close-up, Close-up, Medium Close-up, Medium Shot, Medium Long Shot, Long Shot, Extreme Long Shot, Over-the-shoulder, Point-of-view）
-     - lighting：用中文描述具体的光源类型、方向和色温（如"左侧窗户透入的暖黄色晨光"）
-     - ambiance：用中文描述可见的环境效果（如"薄雾弥漫"、"尘埃飞扬"），避免抽象情绪词
+d. **image_prompt**: Generate an object containing the following fields:
+   - scene: Describe in {target_language} the specific scene in the current frame—character positions, postures, expressions, clothing details, and visible environmental elements and objects. {_format_aspect_ratio_desc(aspect_ratio)}.
+     Focus on the visible picture at the current moment. Only describe specific visual elements that the camera can capture.
+     Ensure the description avoids elements outside the current frame. Exclude metaphors, abstract emotional words, subjective evaluations, multi-scene transitions, and other descriptions that cannot be directly rendered.
+     The picture should be self-contained, without implying past events or future developments.
+   - composition:
+     - shot_type: Shot type (Extreme Close-up, Close-up, Medium Close-up, Medium Shot, Medium Long Shot, Long Shot, Extreme Long Shot, Over-the-shoulder, Point-of-view)
+     - lighting: Describe the specific light source type, direction, and color temperature in {target_language} (e.g., "warm yellow morning light coming through the left window")
+     - ambiance: Describe visible environmental effects in {target_language} (e.g., "misty", "dust flying"), avoid abstract emotional words
 
-e. **video_prompt**：生成包含以下字段的对象：
-   - action：用中文精确描述该时长内主体的具体动作——身体移动、手势变化、表情转换。
-     聚焦单一连贯动作，确保在指定时长内可完成。
-     排除多场景切换、蒙太奇、快速剪辑等单次生成无法实现的效果。
-     排除比喻性动作描述（如"像蝴蝶般飞舞"）。
-   - camera_motion：镜头运动（Static, Pan Left, Pan Right, Tilt Up, Tilt Down, Zoom In, Zoom Out, Tracking Shot）
-     每个片段仅选择一种镜头运动。
-   - ambiance_audio：用中文描述画内音（diegetic sound）——环境声、脚步声、物体声音。
-     仅描述场景内真实存在的声音。排除音乐、BGM、旁白、画外音。
-   - dialogue：{{speaker, line}} 数组。包含角色对话。speaker 必须来自 characters_in_scene。
+e. **video_prompt**: Generate an object containing the following fields:
+   - action: Precisely describe in {target_language} the specific actions of the subject during this duration (head, hands, body movements) and micro-expressions.
+     Note: Try to use 【Age+Gender】 (e.g., "young woman", "middle-aged man") to refer to the subject character to improve the video model's understanding.
+     【Dynamics First Principle】: Purely static descriptions are forbidden! The video cannot be stiff.
+     - Micro-expression library (for precise facial generation): tightly furrowed brows, reddened eyes, dilated pupils, raised eyebrows, one corner of mouth raised, tightly pursed lips, dodging gaze, etc. Do not use vague terms (like "serious expression").
+     - Character action library: Even in dialogue scenes, micro-actions must be added (nodding, turning head, tapping desk, walking, leaning closer).
+     Focus on a single continuous action, ensuring it can be completed within the specified duration. Exclude multi-scene transitions or metaphorical descriptions.
+   - camera_motion: Camera movement (Static, Dolly In, Dolly Out, Pan, Tracking, Boom/Crane, Orbit, Snap Zoom, Handheld Shake, Steadicam)
+     【Camera Move Selection Rules】:
+     - Character moving = MUST use Tracking or Pan, Static is forbidden.
+     - Observing environment = Use Pan to simulate gaze.
+     - Emotional climax = Dolly In, Orbit, or Snap Zoom (only once).
+     - Close-up shots = MUST and CAN ONLY use Static, as movement exposes other parts.
+     - Consecutive segments cannot always use the same camera move (especially consecutive Dolly Ins).
+   - ambiance_audio: Describe in {target_language} the diegetic sound—ambient sounds, footsteps, object sounds.
+     Only describe sounds that genuinely exist within the scene. Exclude music, BGM, narration, voiceovers.
+   - dialogue: Array of {{speaker, line}}. Contains character dialogue. speaker must come from characters_in_scene.
 
-f. **segment_break**：如果在分镜表中标记为"是"，则设为 true。
+f. **segment_break**: Set to true if marked as "Yes" in the shot table.
 
-g. **duration_seconds**：使用分镜表中的时长。
+g. **duration_seconds**: Use the duration from the shot table.
 
-h. **scene_type**：使用分镜表中的场景类型，默认为"剧情"。
+h. **scene_type**: Use the scene type from the shot table, default is "plot".
 
-i. **transition_to_next**：默认为 "cut"。
+i. **transition_to_next**: Default is "cut".
 
-目标：创建生动、视觉一致的分镜提示词，用于指导 AI 图像和视频生成。保持创意、具体，适合{_format_aspect_ratio_desc(aspect_ratio)}动画呈现。
+Goal: Create vivid, visually consistent storyboard prompts for AI image and video generation. Keep it creative, specific, and suitable for {_format_aspect_ratio_desc(aspect_ratio)} animation presentation.
 """
     return prompt

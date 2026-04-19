@@ -37,16 +37,16 @@ def build_character_prompt(name: str, description: str, style: str = "", style_d
     if style_description:
         style_prefix = f"Visual style: {style_description}\n\n"
 
-    return f"""{style_prefix}角色设计参考图{style_part}。
+    return f"""{style_prefix}Character design reference image{style_part}.
 
-「{name}」的全身立绘。
+Full-body portrait of "{name}".
 
 {description}
 
-构图要求：单一角色全身像，姿态自然，面向镜头。
-背景：纯净浅灰色，无任何装饰元素。
-光线：柔和均匀的摄影棚照明，无强烈阴影。
-画质：高清，细节清晰，色彩准确。"""
+Composition requirements: Single character full-body portrait, natural posture, facing the camera.
+Background: Pure light gray, no decorative elements.
+Lighting: Soft and even studio lighting, no strong shadows.
+Image quality: High definition, clear details, accurate colors."""
 
 
 def build_prop_prompt(name: str, description: str, style: str = "", style_description: str = "") -> str:
@@ -71,11 +71,11 @@ def build_prop_prompt(name: str, description: str, style: str = "", style_descri
     if style_description:
         style_prefix = f"Visual style: {style_description}\n\n"
 
-    return f"""{style_prefix}一张专业的道具设计参考图{style_suffix}。
+    return f"""{style_prefix}A professional prop design reference image{style_suffix}.
 
-道具「{name}」的多视角展示。{description}
+Multi-angle display of the prop "{name}". {description}
 
-三个视图水平排列在纯净浅灰背景上：左侧正面全视图、中间45度侧视图展示立体感、右侧关键细节特写。柔和均匀的摄影棚照明，高清质感，色彩准确。"""
+Three views arranged horizontally on a pure light gray background: full front view on the left, 45-degree side view in the middle to show three-dimensionality, and key detail close-up on the right. Soft and even studio lighting, high-definition texture, accurate colors."""
 
 
 def build_scene_prompt(name: str, description: str, style: str = "", style_description: str = "") -> str:
@@ -100,11 +100,11 @@ def build_scene_prompt(name: str, description: str, style: str = "", style_descr
     if style_description:
         style_prefix = f"Visual style: {style_description}\n\n"
 
-    return f"""{style_prefix}一张专业的场景设计参考图{style_suffix}。
+    return f"""{style_prefix}A professional scene design reference image{style_suffix}.
 
-标志性场景「{name}」的视觉参考。{description}
+Visual reference for the iconic scene "{name}". {description}
 
-主画面占据四分之三区域展示环境整体外观与氛围，右下角小图为细节特写。柔和自然光线。"""
+The main image occupies three-quarters of the area showing the overall appearance and atmosphere of the environment, with a small image in the lower right corner for detail close-ups. Soft natural lighting."""
 
 
 def build_storyboard_suffix(content_mode: str = "narration", *, aspect_ratio: str | None = None) -> str:
@@ -118,9 +118,9 @@ def build_storyboard_suffix(content_mode: str = "narration", *, aspect_ratio: st
     else:
         ratio = aspect_ratio
     if ratio == "9:16":
-        return "竖屏构图。"
+        return "Portrait composition."
     elif ratio == "16:9":
-        return "横屏构图。"
+        return "Landscape composition."
     return ""
 
 
