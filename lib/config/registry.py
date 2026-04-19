@@ -271,9 +271,9 @@ PROVIDER_REGISTRY: dict[str, ProviderMeta] = {
     ),
     "openai": ProviderMeta(
         display_name="OpenAI",
-        description="OpenAI 官方平台，支持 GPT-5.4 文本、GPT Image 图片和 Sora 视频生成。",
+        description="OpenAI 官方平台，支持 GPT-5.4 文本和 GPT Image 图片生成。",
         required_keys=["api_key"],
-        optional_keys=["base_url", "image_max_workers", "video_max_workers"],
+        optional_keys=["base_url", "image_max_workers"],
         secret_keys=["api_key"],
         models={
             # --- text ---
@@ -304,20 +304,6 @@ PROVIDER_REGISTRY: dict[str, ProviderMeta] = {
                 display_name="GPT Image 1 Mini",
                 media_type="image",
                 capabilities=["text_to_image", "image_to_image"],
-            ),
-            # --- video ---
-            "sora-2": ModelInfo(
-                display_name="Sora 2",
-                media_type="video",
-                capabilities=["text_to_video", "image_to_video"],
-                default=True,
-                supported_durations=[4, 8, 12],
-            ),
-            "sora-2-pro": ModelInfo(
-                display_name="Sora 2 Pro",
-                media_type="video",
-                capabilities=["text_to_video", "image_to_video"],
-                supported_durations=[4, 8, 12],
             ),
         },
     ),

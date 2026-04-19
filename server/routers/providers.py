@@ -584,7 +584,7 @@ def _test_grok(config: dict[str, str], _t: Callable[..., str]) -> ConnectionTest
     )
 
 
-_OPENAI_MODEL_KEYWORDS = ("gpt", "sora", "dall", "o1", "o3", "o4")
+_OPENAI_MODEL_KEYWORDS = ("gpt", "dall", "o1", "o3", "o4")
 
 
 def _test_openai(config: dict[str, str], _t: Callable[..., str]) -> ConnectionTestResponse:
