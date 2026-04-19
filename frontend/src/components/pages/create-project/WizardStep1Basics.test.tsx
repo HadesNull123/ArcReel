@@ -8,6 +8,7 @@ const baseValue = {
   contentMode: "narration" as const,
   aspectRatio: "9:16" as const,
   generationMode: "single" as const,
+  targetLanguage: "en",
 };
 
 describe("WizardStep1Basics", () => {

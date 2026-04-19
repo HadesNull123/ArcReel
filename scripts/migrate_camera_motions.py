@@ -41,7 +41,7 @@ SHOT_MAP = {
 def migrate_script_file(filepath: Path) -> bool:
     """Migrate a single script JSON file."""
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             data = json.load(f)
     except Exception as e:
         print(f"Error reading {filepath}: {e}")
